@@ -283,10 +283,11 @@ script.on_event(defines.events.on_gui_click, function(event)
 			end
 		end
 	
-	--Label for sprite in search results. Check it before root "wiiuf_fluid_"
+	--Label for fluid in search results. Check it before root "wiiuf_fluid_"
 	elseif event.element.name:find("wiiuf_fluid_label_") then
 		identify(event.element.name:sub(19), player)
 	
+	--Sprite for fluid in search results
 	elseif event.element.name:find("wiiuf_fluid_") then
 		identify(event.element.name:sub(13), player)
 		if player.gui.top.wiiuf_flow.fluids_table then player.gui.top.wiiuf_flow.fluids_table.destroy() end
@@ -310,10 +311,12 @@ script.on_event(defines.events.on_gui_click, function(event)
 	elseif event.element.name:find("wiiuf_pin_") then
 		identify(event.element.name:sub(11), player, true)
 		
+	--Sprite for item in search results
 	elseif event.element.name:find("wiiuf_item_sprite_") then
 		identify(event.element.name:sub(19), player)
 		player.gui.top.wiiuf_flow.search_flow.search_bar_placeholder.search_bar_scroll.destroy()
 		player.gui.top.wiiuf_flow.search_flow.search_bar_placeholder.search_bar_textfield.destroy()
+	--Label for item in search results
 	elseif event.element.name:find("wiiuf_item_label_") then
 		identify(event.element.name:sub(18), player)
 		player.gui.top.wiiuf_flow.search_flow.search_bar_placeholder.search_bar_scroll.destroy()
