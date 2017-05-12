@@ -377,3 +377,5 @@ script.on_event(defines.events.on_gui_text_changed, function(event)
 		end
 	end
 end)
+
+-- vim:noet
