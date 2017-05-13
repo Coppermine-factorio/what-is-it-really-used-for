@@ -27,6 +27,28 @@ function find_technology(recipe, player)
 	end
 end
 
+function sort_recipes(recipes, player)
+	function compare(l, r)
+		-- We want hidden recipes at the end
+		if l.hidden ~= r.hidden then
+			return r.hidden
+		end
+		-- Ideally we would sort by localised name, but as far as I can see that's
+		-- impossible.
+		if l.group.order ~= r.group.order then
+			return l.group.order < r.group.order
+		end
+		if l.subgroup.order ~= r.subgroup.order then
+			return l.subgroup.order < r.subgroup.order
+		end
+		if l.order ~= r.order then
+			return l.order < r.order
+		end
+		return l.name < r.name
+	end
+	table.sort(recipes, compare)
+end
+
 function add_recipe_to_list(recipe, table, player)
 	local from_research = recipe.enabled or find_technology(recipe.name, player)
 	if from_research then
@@ -69,6 +91,10 @@ function identify(item, player, side)
 			end
 		end
 	end
+
+	-- Sort both recipe lists
+	sort_recipes(ingredient_in, player)
+	sort_recipes(product_of, player)
 	
 	for _, entity in pairs(game.entity_prototypes) do
 		if entity.loot then
