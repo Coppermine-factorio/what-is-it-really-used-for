@@ -180,7 +180,7 @@ function identify(item, player, side)
 		product_frame.destroy()
 	end
 	-- mined from
-	if #mined_from > 0 or not side then
+	if #mined_from > 0 then
 		local mined_frame = body_flow.add{type = "frame", name = "wiiuf_mined_frame", caption = {"mined_from"}}
 		local mined_scroll = mined_frame.add{type = "scroll-pane", name = "wiiuf_mined_scroll"}
 		mined_scroll.style.minimal_height = table_height
@@ -193,7 +193,7 @@ function identify(item, player, side)
 		end
 	end
 	-- looted from
-	if #looted_from > 0 or not side then
+	if #looted_from > 0 then
 		local looted_frame = body_flow.add{type = "frame", name = "wiiuf_looted_frame", caption = {"looted_from"}}
 		local looted_scroll = looted_frame.add{type = "scroll-pane", name = "wiiuf_looted_scroll"}
 		looted_scroll.style.minimal_height = table_height
