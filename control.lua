@@ -213,6 +213,13 @@ function show_recipe_details(recipe_name, player)
 
 	local main_frame = player.gui.center.wiiuf_center_frame
 	if not main_frame then
+		main_frame = player.gui.left.wiiuf_left_frame
+		if main_frame then
+			main_frame = main_frame.wiiuf_body_scroll
+		end
+	end
+
+	if not main_frame then
 		player.print("No main frame")
 		return
 	end
