@@ -27,6 +27,26 @@ function find_technology(recipe, player)
 	end
 end
 
+function add_recipe_to_list(recipe, table, player)
+	local from_research = recipe.enabled or find_technology(recipe.name, player)
+	if from_research then
+		table.add{type="sprite", name="wiiuf_recipe_sprite_"..recipe.name, sprite="recipe/"..recipe.name}
+		local label = table.add{
+			type="label", name="wiiuf_recipe_label_"..recipe.name, caption=recipe.localised_name
+		}
+		label.style.minimal_height = 34
+		if not recipe.enabled then
+			label.style = "invalid_label_style"
+			label.tooltip = {"behind_research", from_research}
+		elseif recipe.hidden then
+			label.style = "wiiuf_hidden_label_style"
+		end
+		return true
+	else
+		return false
+	end
+end
+
 function identify(item, player, side)
 	
 	local ingredient_in = {}
@@ -136,16 +156,7 @@ function identify(item, player, side)
 	ingredient_scroll.style.maximal_height = table_height
 	local ingredient_table = ingredient_scroll.add{type = "table", name = "wiiuf_ingredient_table", colspan = 2}
 	for i, recipe in pairs(ingredient_in) do
-		local from_research = recipe.enabled or find_technology(recipe.name, player)
-		if from_research then
-			ingredient_table.add{type = "sprite", name = "wiiuf_sprite_" .. i, sprite = "recipe/"..recipe.name}
-			local label = ingredient_table.add{type = "label", name = "wiiuf_label_" .. i, caption = recipe.localised_name}
-			label.style.minimal_height = 34
-			if not recipe.enabled then
-				label.style = "invalid_label_style"
-				label.tooltip = {"behind_research", from_research}
-			end
-		else
+		if not add_recipe_to_list(recipe, ingredient_table, player) then
 			table.remove(ingredient_in, i)
 		end
 	end
