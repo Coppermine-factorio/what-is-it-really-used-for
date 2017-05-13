@@ -248,10 +248,11 @@ function show_recipe_details(recipe_name, player)
 		end
 		local table = add_to.add{type="table", name="wiiuf_recipe_table_"..i, colspan=2}
 		table.add{
-			type="sprite", name="wiiuf_recipe_sprite", sprite=sprite_dir.."/"..thing_to_add.name
+			type="sprite", name="wiiuf_recipe_item_sprite_"..thing_to_add.name,
+			sprite=sprite_dir.."/"..thing_to_add.name
 		}
 		table.add{
-			type="label", name="wiiuf_recipe_label", caption=localised_name
+			type="label", name="wiiuf_recipe_item_label_"..thing_to_add.name, caption=localised_name
 		}
 	end
 
@@ -396,6 +397,12 @@ script.on_event(defines.events.on_gui_click, function(event)
 	-- Label for recipe in list
 	elseif event.element.name:find("wiiuf_recipe_label_") then
 		show_recipe_details(event.element.name:sub(20), player)
+	-- Sprite for item in recipe view
+	elseif event.element.name:find("wiiuf_recipe_item_sprite_") then
+		identify(event.element.name:sub(26), player)
+	-- Label for item in recipe view
+	elseif event.element.name:find("wiiuf_recipe_item_label_") then
+		identify(event.element.name:sub(25), player)
 	end
 end)
 
