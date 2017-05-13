@@ -229,20 +229,50 @@ function show_recipe_details(recipe_name, player)
 	}
 	local recipe_scroll = recipe_frame.add{type="scroll-pane", name="wiiuf_recipe_scroll"}
 
-	function add_sprite_and_label(add_to, thing_to_add)
-		local table = add_to.add{type="table", name="wiiuf_recipe_table", colspan=2}
+	function add_sprite_and_label(add_to, thing_to_add, sprite_dir, i)
+		if sprite_dir == "auto" then
+			if game.item_prototypes[thing_to_add.name] then
+				sprite_dir = "item"
+			elseif game.fluid_prototypes[thing_to_add.name] then
+				sprite_dir = "fluid"
+			else
+				player.print("Unknown sprite type for "..thing_to_add.name)
+				return
+			end
+		end
+		local localised_name = thing_to_add.localised_name
+		if sprite_dir == "item" then
+			localised_name = game.item_prototypes[thing_to_add.name].localised_name
+		elseif sprite_dir == "fluid" then
+			localised_name = game.fluid_prototypes[thing_to_add.name].localised_name
+		end
+		local table = add_to.add{type="table", name="wiiuf_recipe_table_"..i, colspan=2}
 		table.add{
-			type="sprite", name="wiiuf_recipe_sprite", sprite="recipe/"..thing_to_add.name
+			type="sprite", name="wiiuf_recipe_sprite", sprite=sprite_dir.."/"..thing_to_add.name
 		}
 		table.add{
-			type="label", name="wiiuf_recipe_label", caption=thing_to_add.localised_name
+			type="label", name="wiiuf_recipe_label", caption=localised_name
 		}
 	end
 
-	add_sprite_and_label(recipe_scroll, recipe)
+	local i = 0
+
+	add_sprite_and_label(recipe_scroll, recipe, "recipe", i)
+	i = i + 1
 	recipe_scroll.add{
 		type="label", name="wiiuf_recipe_ingredients_heading", caption={"wiiuf_recipe_ingredients_heading"}
 	}
+	for _, ingredient in pairs(recipe.ingredients) do
+		add_sprite_and_label(recipe_scroll, ingredient, "auto", i)
+		i = i + 1
+	end
+	recipe_scroll.add{
+		type="label", name="wiiuf_recipe_products_heading", caption={"wiiuf_recipe_products_heading"}
+	}
+	for _, product in pairs(recipe.products) do
+		add_sprite_and_label(recipe_scroll, product, "auto", i)
+		i = i + 1
+	end
 end
 
 function minimise(item, player, from_side)
