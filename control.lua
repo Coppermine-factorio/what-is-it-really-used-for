@@ -208,6 +208,43 @@ function identify(item, player, side)
 	
 end
 
+function show_recipe_details(recipe_name, player)
+	local recipe = player.force.recipes[recipe_name]
+
+	local main_frame = player.gui.center.wiiuf_center_frame
+	if not main_frame then
+		player.print("No main frame")
+		return
+	end
+
+	local body_flow = main_frame.wiiuf_body_flow
+
+	-- Remove any existing recipe entry
+	if body_flow.wiiuf_recipe_frame then
+		body_flow.wiiuf_recipe_frame.destroy()
+	end
+
+	local recipe_frame = body_flow.add{
+		type="frame", name="wiiuf_recipe_frame", caption={"wiiuf_recipe_details"}
+	}
+	local recipe_scroll = recipe_frame.add{type="scroll-pane", name="wiiuf_recipe_scroll"}
+
+	function add_sprite_and_label(add_to, thing_to_add)
+		local table = add_to.add{type="table", name="wiiuf_recipe_table", colspan=2}
+		table.add{
+			type="sprite", name="wiiuf_recipe_sprite", sprite="recipe/"..thing_to_add.name
+		}
+		table.add{
+			type="label", name="wiiuf_recipe_label", caption=thing_to_add.localised_name
+		}
+	end
+
+	add_sprite_and_label(recipe_scroll, recipe)
+	recipe_scroll.add{
+		type="label", name="wiiuf_recipe_ingredients_heading", caption={"wiiuf_recipe_ingredients_heading"}
+	}
+end
+
 function minimise(item, player, from_side)
 	if not player.gui.left.wiiuf_item_flow then
 		local item_flow = player.gui.left.add{type = "scroll-pane", name = "wiiuf_item_flow", style = "small_spacing_scroll_pane_style"}
@@ -323,6 +360,12 @@ script.on_event(defines.events.on_gui_click, function(event)
 		identify(event.element.name:sub(18), player)
 		player.gui.top.wiiuf_flow.search_flow.search_bar_placeholder.search_bar_scroll.destroy()
 		player.gui.top.wiiuf_flow.search_flow.search_bar_placeholder.search_bar_textfield.destroy()
+	-- Sprite for recipe in list
+	elseif event.element.name:find("wiiuf_recipe_sprite_") then
+		show_recipe_details(event.element.name:sub(21), player)
+	-- Label for recipe in list
+	elseif event.element.name:find("wiiuf_recipe_label_") then
+		show_recipe_details(event.element.name:sub(20), player)
 	end
 end)
 
