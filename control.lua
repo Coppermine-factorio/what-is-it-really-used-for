@@ -171,16 +171,7 @@ function identify(item, player, side)
 	product_scroll.style.maximal_height = table_height
 	local product_table = product_scroll.add{type = "table", name = "wiiuf_product_table", colspan = 2}
 	for i, recipe in pairs(product_of) do
-		local from_research = recipe.enabled or find_technology(recipe.name, player)
-		if from_research then
-			product_table.add{type = "sprite", name = "wiiuf_sprite_" .. i, sprite = "recipe/"..recipe.name}
-			local label = product_table.add{type = "label", name = "wiiuf_label_" .. i, caption = recipe.localised_name}
-			label.style.minimal_height = 34
-			if not recipe.enabled then
-				label.style = "invalid_label_style"
-				label.tooltip = {"behind_research", from_research}
-			end
-		else
+		if not add_recipe_to_list(recipe, product_table, player) then
 			table.remove(product_of, i)
 		end
 	end
