@@ -33,8 +33,6 @@ function sort_recipes(recipes, player)
 		if l.hidden ~= r.hidden then
 			return r.hidden
 		end
-		-- Ideally we would sort by localised name, but as far as I can see that's
-		-- impossible.
 		if l.group.order ~= r.group.order then
 			return l.group.order < r.group.order
 		end
