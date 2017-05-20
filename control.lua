@@ -52,9 +52,11 @@ function add_recipe_to_list(recipe, table, player)
 	if from_research then
 		table.add{type="sprite", name="wiiuf_recipe_sprite_"..recipe.name, sprite="recipe/"..recipe.name}
 		local label = table.add{
-			type="label", name="wiiuf_recipe_label_"..recipe.name, caption=recipe.localised_name
+			type="label", name="wiiuf_recipe_label_"..recipe.name, caption=recipe.localised_name,
+			single_line=false
 		}
-		label.style.minimal_height = 34
+		label.style.minimal_height = 39
+		label.style.maximal_width = 249
 		if not recipe.enabled then
 			label.style = "invalid_label_style"
 			label.tooltip = {"behind_research", from_research}
@@ -114,9 +116,10 @@ function identify(item, player, side)
 		end
 	end
 	
-	local table_height = math.max(#ingredient_in, #product_of, #looted_from, #mined_from)
-	table_height = math.min((table_height * 36)+4, 350)
-	if side then table_height = math.min(table_height, 250) end
+	local table_height = 350
+	if side then table_height = 250 end
+
+	local section_width = 300
 	
 	-- GUI stuff
 	if player.gui.center.wiiuf_center_frame then player.gui.center.wiiuf_center_frame.destroy() end
@@ -172,34 +175,7 @@ function identify(item, player, side)
 	else
 		body_flow = main_frame.add{type = "flow", name = "wiiuf_body_flow", direction = "horizontal", style = "achievements_flow_style"}
 	end
-	
-	-- ingredient in
-	local ingredient_frame = body_flow.add{type = "frame", name = "wiiuf_ingredient_frame", caption = {"ingredient_in"}}
-	local ingredient_scroll = ingredient_frame.add{type = "scroll-pane", name = "wiiuf_ingredient_scroll"}
-	ingredient_scroll.style.minimal_height = table_height
-	ingredient_scroll.style.maximal_height = table_height
-	local ingredient_table = ingredient_scroll.add{type = "table", name = "wiiuf_ingredient_table", colspan = 2}
-	for i, recipe in pairs(ingredient_in) do
-		if not add_recipe_to_list(recipe, ingredient_table, player) then
-			table.remove(ingredient_in, i)
-		end
-	end
-	
-	if side and #ingredient_in == 0 then
-		ingredient_frame.destroy()
-	end
-	-- product of
-	local product_frame = body_flow.add{type = "frame", name = "wiiuf_product_frame", caption = {"product_of"}}
-	local product_scroll = product_frame.add{type = "scroll-pane", name = "wiiuf_product_scroll"}
-	product_scroll.style.minimal_height = table_height
-	product_scroll.style.maximal_height = table_height
-	local product_table = product_scroll.add{type = "table", name = "wiiuf_product_table", colspan = 2}
-	for i, recipe in pairs(product_of) do
-		if not add_recipe_to_list(recipe, product_table, player) then
-			table.remove(product_of, i)
-		end
-	end
-	
+
 	if side and #product_of == 0 then
 		product_frame.destroy()
 	end
@@ -229,7 +205,49 @@ function identify(item, player, side)
 			label.style.minimal_height = 34
 		end
 	end
+
+	-- ingredient in
+	local ingredient_frame = body_flow.add{type = "frame", name = "wiiuf_ingredient_frame", caption = {"ingredient_in"}}
+	local ingredient_scroll = ingredient_frame.add{type = "scroll-pane", name = "wiiuf_ingredient_scroll"}
+	ingredient_scroll.style.minimal_height = table_height
+	ingredient_scroll.style.maximal_height = table_height
+	ingredient_scroll.style.minimal_width = section_width
+	ingredient_scroll.style.maximal_width = section_width
+	local ingredient_table = ingredient_scroll.add{type = "table", name = "wiiuf_ingredient_table", colspan = 2}
+	for i, recipe in pairs(ingredient_in) do
+		if not add_recipe_to_list(recipe, ingredient_table, player) then
+			table.remove(ingredient_in, i)
+		end
+	end
 	
+	if side and #ingredient_in == 0 then
+		ingredient_frame.destroy()
+	end
+	-- product of
+	local product_frame = body_flow.add{type = "frame", name = "wiiuf_product_frame", caption = {"product_of"}}
+	local product_scroll = product_frame.add{type = "scroll-pane", name = "wiiuf_product_scroll"}
+	product_scroll.style.minimal_height = table_height
+	product_scroll.style.maximal_height = table_height
+	product_scroll.style.minimal_width = section_width
+	product_scroll.style.maximal_width = section_width
+	local product_table = product_scroll.add{type = "table", name = "wiiuf_product_table", colspan = 2}
+	for i, recipe in pairs(product_of) do
+		if not add_recipe_to_list(recipe, product_table, player) then
+			table.remove(product_of, i)
+		end
+	end
+
+	-- Add an empty recipe frame so that things don't shift when it's used later
+	local recipe_frame = body_flow.add{
+		type="frame", name="wiiuf_recipe_frame", caption={"wiiuf_recipe_details"}
+	}
+	local recipe_scroll = recipe_frame.add{type="scroll-pane", name="wiiuf_recipe_scroll"}
+	recipe_scroll.style.minimal_width = section_width
+	recipe_scroll.style.maximal_width = section_width
+	local label = recipe_scroll.add{
+		type="label", name="wiiuf_recipe_hint", caption={"wiiuf_recipe_hint"}, single_line=false
+	}
+	label.style.maximal_width = 249
 end
 
 function show_recipe_details(recipe_name, player)
@@ -255,10 +273,14 @@ function show_recipe_details(recipe_name, player)
 		body_flow.wiiuf_recipe_frame.destroy()
 	end
 
+	local section_width = 300
+
 	local recipe_frame = body_flow.add{
 		type="frame", name="wiiuf_recipe_frame", caption={"wiiuf_recipe_details"}
 	}
 	local recipe_scroll = recipe_frame.add{type="scroll-pane", name="wiiuf_recipe_scroll"}
+	recipe_scroll.style.minimal_width = section_width
+	recipe_scroll.style.maximal_width = section_width
 
 	function add_sprite_and_label(add_to, thing_to_add, sprite_dir, i)
 		if sprite_dir == "auto" then
@@ -282,9 +304,11 @@ function show_recipe_details(recipe_name, player)
 			type="sprite", name="wiiuf_recipe_item_sprite_"..thing_to_add.name,
 			sprite=sprite_dir.."/"..thing_to_add.name
 		}
-		table.add{
-			type="label", name="wiiuf_recipe_item_label_"..thing_to_add.name, caption=localised_name
+		local label = table.add{
+			type="label", name="wiiuf_recipe_item_label_"..thing_to_add.name, caption=localised_name,
+			single_line=false
 		}
+		label.style.maximal_width = 249
 	end
 
 	local i = 0
