@@ -29,7 +29,7 @@ data:extend({
   {
     type = "sprite",
     name = "arrow-left",
-	filename = "__what-is-it-used-for__/graphics/arrow_left.png",
+	filename = "__what-is-it-really-used-for__/graphics/arrow_left.png",
 	priority = "extra-high-no-scale",
 	width = 32,
 	height = 32,
@@ -38,7 +38,7 @@ data:extend({
   {
     type = "sprite",
     name = "arrow-bar",
-	filename = "__what-is-it-used-for__/graphics/arrow_bar.png",
+	filename = "__what-is-it-really-used-for__/graphics/arrow_bar.png",
 	priority = "extra-high-no-scale",
 	width = 32,
 	height = 32,
@@ -47,7 +47,7 @@ data:extend({
   {
     type = "sprite",
     name = "close",
-	filename = "__what-is-it-used-for__/graphics/close.png",
+	filename = "__what-is-it-really-used-for__/graphics/close.png",
 	priority = "extra-high-no-scale",
 	width = 64,
 	height = 64,
