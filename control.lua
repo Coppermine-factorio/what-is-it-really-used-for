@@ -176,9 +176,6 @@ function identify(item, player, side)
 		body_flow = main_frame.add{type = "flow", name = "wiiuf_body_flow", direction = "horizontal", style = "achievements_flow_style"}
 	end
 
-	if side and #product_of == 0 then
-		product_frame.destroy()
-	end
 	-- mined from
 	if #mined_from > 0 then
 		local mined_frame = body_flow.add{type = "frame", name = "wiiuf_mined_frame", caption = {"mined_from"}}
@@ -214,15 +211,17 @@ function identify(item, player, side)
 	ingredient_scroll.style.minimal_width = section_width
 	ingredient_scroll.style.maximal_width = section_width
 	local ingredient_table = ingredient_scroll.add{type = "table", name = "wiiuf_ingredient_table", colspan = 2}
+	local is_ingredient = false
 	for i, recipe in pairs(ingredient_in) do
-		if not add_recipe_to_list(recipe, ingredient_table, player) then
-			table.remove(ingredient_in, i)
+		if add_recipe_to_list(recipe, ingredient_table, player) then
+			is_ingredient = true
 		end
 	end
 	
-	if side and #ingredient_in == 0 then
+	if side and not is_ingredient then
 		ingredient_frame.destroy()
 	end
+
 	-- product of
 	local product_frame = body_flow.add{type = "frame", name = "wiiuf_product_frame", caption = {"product_of"}}
 	local product_scroll = product_frame.add{type = "scroll-pane", name = "wiiuf_product_scroll"}
@@ -231,10 +230,15 @@ function identify(item, player, side)
 	product_scroll.style.minimal_width = section_width
 	product_scroll.style.maximal_width = section_width
 	local product_table = product_scroll.add{type = "table", name = "wiiuf_product_table", colspan = 2}
+	local is_product = false
 	for i, recipe in pairs(product_of) do
-		if not add_recipe_to_list(recipe, product_table, player) then
-			table.remove(product_of, i)
+		if add_recipe_to_list(recipe, product_table, player) then
+			is_product = true
 		end
+	end
+
+	if side and not is_product then
+		product_frame.destroy()
 	end
 
 	-- Add an empty recipe frame so that things don't shift when it's used later
