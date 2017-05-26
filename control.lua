@@ -525,4 +525,4 @@ script.on_event(defines.events.on_gui_text_changed, function(event)
 	end
 end)
 
--- vim:noet
+-- vim:noet:ts=2
