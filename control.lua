@@ -27,6 +27,21 @@ function find_technology(recipe, player)
 	end
 end
 
+function get_machines_for_recipe(recipe, player)
+	local factories = {}
+	local recipe_category = recipe.category
+
+	for _, entity in pairs(game.entity_prototypes) do
+		if entity.crafting_categories then
+			if entity.crafting_categories[recipe_category] then
+				factories[entity.name] = entity
+			end
+		end
+	end
+
+	return factories
+end
+
 function sort_recipes(recipes, player)
 	function compare(l, r)
 		-- We want hidden recipes at the end
@@ -293,6 +308,8 @@ function show_recipe_details(recipe_name, player)
 	recipe_scroll.style.minimal_width = section_width
 	recipe_scroll.style.maximal_width = section_width
 
+	-- A generic function for adding an item to the list in the recipe pane
+
 	function add_sprite_and_label(add_to, thing_to_add, sprite_dir, i)
 		if sprite_dir == "auto" then
 			if game.item_prototypes[thing_to_add.name] then
@@ -306,15 +323,29 @@ function show_recipe_details(recipe_name, player)
 		end
 		local localised_name = thing_to_add.localised_name
 		if sprite_dir == "item" then
-			localised_name = game.item_prototypes[thing_to_add.name].localised_name
+			if game.item_prototypes[thing_to_add.name] then
+				localised_name = game.item_prototypes[thing_to_add.name].localised_name
+			else
+				-- We were told it was an item but it wasn't.  This can happen for
+				-- crafting entities sometimes.  Just silently do nothing in this case
+				return
+			end
 		elseif sprite_dir == "fluid" then
 			localised_name = game.fluid_prototypes[thing_to_add.name].localised_name
 		end
 		local table = add_to.add{type="table", name="wiiuf_recipe_table_"..i, colspan=2}
-		table.add{
-			type="sprite", name="wiiuf_recipe_item_sprite_"..thing_to_add.name,
-			sprite=sprite_dir.."/"..thing_to_add.name
+		-- In case the sprite does not exist we use pcall to catch the exception
+		-- and don't have a sprite (thanks to Helfima/Helmod for the trick).
+		local sprite = sprite_dir.."/"..thing_to_add.name
+		local sprite_options = {
+			type="sprite", name="wiiuf_recipe_item_sprite_"..thing_to_add.name, sprite=sprite
 		}
+		local ok, error = pcall(function()
+			table.add(sprite_options)
+		end)
+		if not(ok) then
+			player.print("Sprite missing: "..sprite)
+		end
 		local label = table.add{
 			type="label", name="wiiuf_recipe_item_label_"..thing_to_add.name, caption=localised_name,
 			single_line=false
@@ -326,6 +357,7 @@ function show_recipe_details(recipe_name, player)
 
 	add_sprite_and_label(recipe_scroll, recipe, "recipe", i)
 	i = i + 1
+	-- First add ingredients
 	recipe_scroll.add{
 		type="label", name="wiiuf_recipe_ingredients_heading", caption={"wiiuf_recipe_ingredients_heading"}
 	}
@@ -333,6 +365,8 @@ function show_recipe_details(recipe_name, player)
 		add_sprite_and_label(recipe_scroll, ingredient, "auto", i)
 		i = i + 1
 	end
+
+	-- Next add products
 	recipe_scroll.add{
 		type="label", name="wiiuf_recipe_products_heading", caption={"wiiuf_recipe_products_heading"}
 	}
@@ -340,6 +374,16 @@ function show_recipe_details(recipe_name, player)
 		add_sprite_and_label(recipe_scroll, product, "auto", i)
 		i = i + 1
 	end
+
+	-- Finally add machines
+	recipe_scroll.add{
+		type="label", name="wiiuf_recipe_machines_heading", caption={"wiiuf_recipe_machines_heading"}
+	}
+	for _, machine in pairs(get_machines_for_recipe(recipe, player)) do
+		add_sprite_and_label(recipe_scroll, machine, "item", i)
+		i = i + 1
+	end
+
 end
 
 function minimise(item, player, from_side)
