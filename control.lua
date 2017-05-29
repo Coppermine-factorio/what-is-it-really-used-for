@@ -359,7 +359,8 @@ function show_recipe_details(recipe_name, player)
 	i = i + 1
 	-- First add ingredients
 	recipe_scroll.add{
-		type="label", name="wiiuf_recipe_ingredients_heading", caption={"wiiuf_recipe_ingredients_heading"}
+		type="label", name="wiiuf_recipe_ingredients_heading", caption={"wiiuf_recipe_ingredients_heading"},
+		style="bold_label_style"
 	}
 	for _, ingredient in pairs(recipe.ingredients) do
 		add_sprite_and_label(recipe_scroll, ingredient, "auto", i)
@@ -368,7 +369,8 @@ function show_recipe_details(recipe_name, player)
 
 	-- Next add products
 	recipe_scroll.add{
-		type="label", name="wiiuf_recipe_products_heading", caption={"wiiuf_recipe_products_heading"}
+		type="label", name="wiiuf_recipe_products_heading", caption={"wiiuf_recipe_products_heading"},
+		style="bold_label_style"
 	}
 	for _, product in pairs(recipe.products) do
 		add_sprite_and_label(recipe_scroll, product, "auto", i)
@@ -377,7 +379,8 @@ function show_recipe_details(recipe_name, player)
 
 	-- Finally add machines
 	recipe_scroll.add{
-		type="label", name="wiiuf_recipe_machines_heading", caption={"wiiuf_recipe_machines_heading"}
+		type="label", name="wiiuf_recipe_machines_heading", caption={"wiiuf_recipe_machines_heading"},
+		style="bold_label_style"
 	}
 	for _, machine in pairs(get_machines_for_recipe(recipe, player)) do
 		add_sprite_and_label(recipe_scroll, machine, "item", i)
