@@ -102,8 +102,8 @@ data.raw["gui-style"].default.row_table_style =
     }
 
 data.raw["gui-style"].default.wiiuf_hidden_label_style = {
-  type = "label_style",
-  font = "default",
-  font_color = {r=.8, g=.8, b=.8}
+    type = "label_style",
+    font = "default",
+    font_color = {r=.8, g=.8, b=.8}
 }
 -- vim:ts=4
