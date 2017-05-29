@@ -203,15 +203,19 @@ function identify(item, player, side)
 		end
 	end
 
+	function set_scroll_dimensions(scroll)
+		scroll.style.minimal_height = table_height
+		scroll.style.maximal_height = table_height
+		if not side then
+			scroll.style.minimal_width = section_width
+			scroll.style.maximal_width = section_width
+		end
+	end
+
 	-- ingredient in
 	local ingredient_frame = body_flow.add{type = "frame", name = "wiiuf_ingredient_frame", caption = {"ingredient_in"}}
 	local ingredient_scroll = ingredient_frame.add{type = "scroll-pane", name = "wiiuf_ingredient_scroll"}
-	ingredient_scroll.style.minimal_height = table_height
-	ingredient_scroll.style.maximal_height = table_height
-	if not side then
-		ingredient_scroll.style.minimal_width = section_width
-		ingredient_scroll.style.maximal_width = section_width
-	end
+	set_scroll_dimensions(ingredient_scroll)
 	local ingredient_table = ingredient_scroll.add{type = "table", name = "wiiuf_ingredient_table", colspan = 2}
 	local is_ingredient = false
 	for i, recipe in pairs(ingredient_in) do
@@ -227,12 +231,7 @@ function identify(item, player, side)
 	-- product of
 	local product_frame = body_flow.add{type = "frame", name = "wiiuf_product_frame", caption = {"product_of"}}
 	local product_scroll = product_frame.add{type = "scroll-pane", name = "wiiuf_product_scroll"}
-	product_scroll.style.minimal_height = table_height
-	product_scroll.style.maximal_height = table_height
-	if not side then
-		product_scroll.style.minimal_width = section_width
-		product_scroll.style.maximal_width = section_width
-	end
+	set_scroll_dimensions(product_scroll)
 	local product_table = product_scroll.add{type = "table", name = "wiiuf_product_table", colspan = 2}
 	local is_product = false
 	for i, recipe in pairs(product_of) do
@@ -250,10 +249,7 @@ function identify(item, player, side)
 		type="frame", name="wiiuf_recipe_frame", caption={"wiiuf_recipe_details"}
 	}
 	local recipe_scroll = recipe_frame.add{type="scroll-pane", name="wiiuf_recipe_scroll"}
-	if not side then
-		recipe_scroll.style.minimal_width = section_width
-		recipe_scroll.style.maximal_width = section_width
-	end
+	set_scroll_dimensions(recipe_scroll)
 	local label = recipe_scroll.add{
 		type="label", name="wiiuf_recipe_hint", caption={"wiiuf_recipe_hint"}, single_line=false
 	}
@@ -283,12 +279,17 @@ function show_recipe_details(recipe_name, player)
 		body_flow.wiiuf_recipe_frame.destroy()
 	end
 
+	-- TODO: table_height and section_width should probably be globals, and
+	-- maybe configurable
+	local table_height = 350
 	local section_width = 300
 
 	local recipe_frame = body_flow.add{
 		type="frame", name="wiiuf_recipe_frame", caption={"wiiuf_recipe_details"}
 	}
 	local recipe_scroll = recipe_frame.add{type="scroll-pane", name="wiiuf_recipe_scroll"}
+	recipe_scroll.style.minimal_height = table_height
+	recipe_scroll.style.maximal_height = table_height
 	recipe_scroll.style.minimal_width = section_width
 	recipe_scroll.style.maximal_width = section_width
 
