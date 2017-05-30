@@ -258,10 +258,10 @@ function identify(item, player, side)
 	local product_scroll = product_frame.add{type = "scroll-pane", name = "wiiuf_product_scroll"}
 	set_scroll_dimensions(product_scroll)
 	local product_table = product_scroll.add{type = "table", name = "wiiuf_product_table", colspan = 2}
-	local is_product = false
+	local num_product_recipes = 0
 	for i, recipe in pairs(product_of) do
 		if add_recipe_to_list(recipe, product_table, player) then
-			is_product = true
+			num_product_recipes = num_product_recipes + 1
 		end
 	end
 
@@ -269,16 +269,22 @@ function identify(item, player, side)
 		product_frame.destroy()
 	end
 
-	-- Add an empty recipe frame so that things don't shift when it's used later
-	local recipe_frame = body_flow.add{
-		type="frame", name="wiiuf_recipe_frame", caption={"wiiuf_recipe_details"}
-	}
-	local recipe_scroll = recipe_frame.add{type="scroll-pane", name="wiiuf_recipe_scroll"}
-	set_scroll_dimensions(recipe_scroll)
-	local label = recipe_scroll.add{
-		type="label", name="wiiuf_recipe_hint", caption={"wiiuf_recipe_hint"}, single_line=false
-	}
-	label.style.maximal_width = 249
+	-- If there was only one recipe for making this item, then go ahead and show
+	-- it immediately
+	if num_product_recipes == 1 then
+		show_recipe_details(product_of[1].name, player)
+	else
+		-- Otherwise, add an empty recipe frame so that things don't shift when it's used later
+		local recipe_frame = body_flow.add{
+			type="frame", name="wiiuf_recipe_frame", caption={"wiiuf_recipe_details"}
+		}
+		local recipe_scroll = recipe_frame.add{type="scroll-pane", name="wiiuf_recipe_scroll"}
+		set_scroll_dimensions(recipe_scroll)
+		local label = recipe_scroll.add{
+			type="label", name="wiiuf_recipe_hint", caption={"wiiuf_recipe_hint"}, single_line=false
+		}
+		label.style.maximal_width = 249
+	end
 end
 
 function show_recipe_details(recipe_name, player)
