@@ -1,3 +1,5 @@
+require("mod-gui")
+
 SHOW_ALL = false	-- Set to true to also display disabled recipes and recipes without technology.
 
 function find_technology(recipe, player)
@@ -138,7 +140,8 @@ function identify(item, player, side)
 	
 	-- GUI stuff
 	if player.gui.center.wiiuf_center_frame then player.gui.center.wiiuf_center_frame.destroy() end
-	if side and player.gui.left.wiiuf_left_frame then player.gui.left.wiiuf_left_frame.destroy() end
+	local mod_frame_flow = mod_gui.get_frame_flow(player)
+	if side and mod_frame_flow.wiiuf_left_frame then mod_frame_flow.wiiuf_left_frame.destroy() end
 	
 	
 	-- Create center frame
@@ -146,7 +149,9 @@ function identify(item, player, side)
 	if not side then
 		main_frame = player.gui.center.add{type = "frame", name = "wiiuf_center_frame", direction = "vertical"}
 	else
-		main_frame = player.gui.left.add{type = "frame", name = "wiiuf_left_frame", direction = "vertical"}
+		main_frame = mod_gui.get_frame_flow(player).add{
+			type = "frame", name = "wiiuf_left_frame", direction = "vertical"
+		}
 	end
 	
 	
@@ -276,7 +281,7 @@ function show_recipe_details(recipe_name, player)
 
 	local main_frame = player.gui.center.wiiuf_center_frame
 	if not main_frame then
-		main_frame = player.gui.left.wiiuf_left_frame
+		main_frame = mod_gui.get_frame_flow(player).wiiuf_left_frame
 		if main_frame then
 			main_frame = main_frame.wiiuf_body_scroll
 		end
@@ -410,22 +415,29 @@ function minimise(item, player, from_side)
 		player.gui.left.wiiuf_item_flow.wiiuf_item_table.add{type = "sprite-button", name = "wiiuf_show_" .. item, sprite = sprite, tooltip = {"show", localised_name}, style = "slot_button_style"}
 	end
 	if not from_side and player.gui.center.wiiuf_center_frame then player.gui.center.wiiuf_center_frame.destroy() end
-	if from_side and player.gui.left.wiiuf_left_frame then player.gui.left.wiiuf_left_frame.destroy() end
+	local mod_frame_flow = mod_gui.get_frame_flow(player)
+	if from_side and mod_frame_flow.wiiuf_left_frame then mod_frame_flow.wiiuf_left_frame.destroy() end
+end
+
+function get_wiiuf_flow(player)
+	local button_flow = mod_gui.get_button_flow(player)
+	local flow = button_flow.wiiuf_flow
+	if not flow then
+		flow = button_flow.add{type = "flow", name = "wiiuf_flow"}
+	end
+	return flow
 end
 
 function add_top_button(player)
-	local flow = player.gui.top.wiiuf_flow
-	if not flow then
-		flow = player.gui.top.add{type = "flow", name = "wiiuf_flow"}
-	end
+	local flow = get_wiiuf_flow(player)
 	if global.n_fluids < 10 then flow.direction = "vertical" else flow.direction = "horizontal" end
 
 	if flow["looking-glass"] then flow["looking-glass"].destroy()	end -- remove the old 1.0.x button
 	
 	if flow["search_flow"] then flow["search_flow"].destroy() end
-	local search_flow = flow.add{type = "flow", name = "search_flow", direction = "horizontal", style = "search_flow_style"}
+	local search_flow = flow.add{type = "flow", name = "search_flow", direction = "horizontal"}
 	search_flow.add{type = "flow", name = "search_bar_placeholder", direction = "vertical"}
-	search_flow.add{type = "sprite-button", name = "looking-glass", sprite = "looking-glass", style = "search_button_style", tooltip = {"top_button_tooltip"}}
+	search_flow.add{type = "sprite-button", name = "looking-glass", sprite = "looking-glass", style = mod_gui.button_style, tooltip = {"top_button_tooltip"}}
 
 end
 
@@ -451,12 +463,11 @@ end)
 
 script.on_event(defines.events.on_gui_click, function(event)
 	local player = game.players[event.player_index]
+	local flow = get_wiiuf_flow(player)
 	if event.element.name == "looking-glass" then
 		if player.cursor_stack.valid_for_read then
 			identify(player.cursor_stack.name, player)
 		else
-			local flow = player.gui.top.wiiuf_flow
-			
 			if flow.fluids_table then flow.fluids_table.destroy()
 			else
 				local fluids_table = flow.add{type = "table", colspan = math.ceil(global.n_fluids/10), name = "fluids_table", style = "slot_table_style"}
@@ -473,7 +484,7 @@ script.on_event(defines.events.on_gui_click, function(event)
 	--Sprite for fluid in search results
 	elseif event.element.name:find("wiiuf_fluid_") then
 		identify(event.element.name:sub(13), player)
-		if player.gui.top.wiiuf_flow.fluids_table then player.gui.top.wiiuf_flow.fluids_table.destroy() end
+		if flow.fluids_table then flow.fluids_table.destroy() end
 	
 	elseif event.element.name == "wiiuf_close" then
 		event.element.parent.parent.destroy()
@@ -488,7 +499,7 @@ script.on_event(defines.events.on_gui_click, function(event)
 			if #player.gui.left.wiiuf_item_flow.wiiuf_item_table.children_names == 1 then
 				player.gui.left.wiiuf_item_flow.destroy()
 			end
-		else player.gui.left.wiiuf_left_frame.destroy()
+		else mod_gui.get_frame_flow(player).wiiuf_left_frame.destroy()
 		end
 	
 	elseif event.element.name:find("wiiuf_pin_") then
@@ -497,13 +508,13 @@ script.on_event(defines.events.on_gui_click, function(event)
 	--Sprite for item in search results
 	elseif event.element.name:find("wiiuf_item_sprite_") then
 		identify(event.element.name:sub(19), player)
-		player.gui.top.wiiuf_flow.search_flow.search_bar_placeholder.search_bar_scroll.destroy()
-		player.gui.top.wiiuf_flow.search_flow.search_bar_placeholder.search_bar_textfield.destroy()
+		flow.search_flow.search_bar_placeholder.search_bar_scroll.destroy()
+		flow.search_flow.search_bar_placeholder.search_bar_textfield.destroy()
 	--Label for item in search results
 	elseif event.element.name:find("wiiuf_item_label_") then
 		identify(event.element.name:sub(18), player)
-		player.gui.top.wiiuf_flow.search_flow.search_bar_placeholder.search_bar_scroll.destroy()
-		player.gui.top.wiiuf_flow.search_flow.search_bar_placeholder.search_bar_textfield.destroy()
+		flow.search_flow.search_bar_placeholder.search_bar_scroll.destroy()
+		flow.search_flow.search_bar_placeholder.search_bar_textfield.destroy()
 	-- Sprite for recipe in list
 	elseif event.element.name:find("wiiuf_recipe_sprite_") then
 		show_recipe_details(event.element.name:sub(21), player)
@@ -521,14 +532,15 @@ end)
 
 script.on_event("inspect_item", function(event)
 	local player = game.players[event.player_index]
+	local flow = get_wiiuf_flow(player)
 	if player.cursor_stack.valid_for_read then
 		identify(player.cursor_stack.name, player)
 	else
-		if player.gui.top.wiiuf_flow.search_flow.search_bar_placeholder.search_bar_textfield then
-			player.gui.top.wiiuf_flow.search_flow.search_bar_placeholder.search_bar_textfield.destroy()
-			if player.gui.top.wiiuf_flow.search_flow.search_bar_placeholder.search_bar_scroll then player.gui.top.wiiuf_flow.search_flow.search_bar_placeholder.search_bar_scroll.destroy() end
+		if flow.search_flow.search_bar_placeholder.search_bar_textfield then
+			flow.search_flow.search_bar_placeholder.search_bar_textfield.destroy()
+			if flow.search_flow.search_bar_placeholder.search_bar_scroll then flow.search_flow.search_bar_placeholder.search_bar_scroll.destroy() end
 		else
-			player.gui.top.wiiuf_flow.search_flow.search_bar_placeholder.add{type = "textfield", name = "search_bar_textfield"}
+			flow.search_flow.search_bar_placeholder.add{type = "textfield", name = "search_bar_textfield"}
 		end
 	end
 end)
@@ -536,11 +548,14 @@ end)
 script.on_event(defines.events.on_gui_text_changed, function(event)
 	if event.element.name == "search_bar_textfield" then
 		local player = game.players[event.player_index]
-		if player.gui.top.wiiuf_flow.search_flow.search_bar_placeholder.search_bar_scroll then player.gui.top.wiiuf_flow.search_flow.search_bar_placeholder.search_bar_scroll.destroy() end
+		local flow = get_wiiuf_flow(player)
+		if flow.search_flow.search_bar_placeholder.search_bar_scroll then flow.search_flow.search_bar_placeholder.search_bar_scroll.destroy() end
 		
 		if string.len(event.element.text) < 2 then return end
 		
-		local scroll_pane = player.gui.top.wiiuf_flow.search_flow.search_bar_placeholder.add{type = "scroll-pane", name = "search_bar_scroll", style = "small_spacing_scroll_pane_style"}
+		local scroll_pane = flow.search_flow.search_bar_placeholder.add{
+			type = "scroll-pane", name = "search_bar_scroll", style = "small_spacing_scroll_pane_style"
+		}
 		scroll_pane.style.maximal_height = 250
 		local results_table = scroll_pane.add{type = "table", name = "results_table", colspan = 2, style = "row_table_style"}
 		
