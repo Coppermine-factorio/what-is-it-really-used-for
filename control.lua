@@ -87,6 +87,11 @@ function add_recipe_to_list(recipe, table, player)
 end
 
 function identify(item, player, side)
+	-- If it's not actually an item, do nothing
+	-- This can happen if you click the recipe name on the recipe pane
+	if not game.item_prototypes[item] and not game.fluid_prototypes[item] then
+		return
+	end
 	
 	local ingredient_in = {}
 	local mined_from = {}
