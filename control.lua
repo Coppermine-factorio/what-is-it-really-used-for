@@ -326,7 +326,7 @@ function show_recipe_details(recipe_name, player)
 
 	-- A generic function for adding an item to the list in the recipe pane
 
-	function add_sprite_and_label(add_to, thing_to_add, with_amount, sprite_dir, i)
+	function add_sprite_and_label(add_to, thing_to_add, with_amount, style, tooltip, sprite_dir, i)
 		if sprite_dir == "auto" then
 			if game.item_prototypes[thing_to_add.name] then
 				sprite_dir = "item"
@@ -370,12 +370,18 @@ function show_recipe_details(recipe_name, player)
 			type="label", name="wiiuf_recipe_item_label_"..thing_to_add.name, caption=caption,
 			single_line=false
 		}
+		if style then
+			label.style = style
+		end
 		label.style.maximal_width = 249
+		if tooltip then
+			label.tooltip = tooltip
+		end
 	end
 
 	local i = 0
 
-	add_sprite_and_label(recipe_scroll, recipe, false, "recipe", i)
+	add_sprite_and_label(recipe_scroll, recipe, false, nil, nil, "recipe", i)
 	i = i + 1
 	-- First add ingredients
 	recipe_scroll.add{
@@ -383,7 +389,7 @@ function show_recipe_details(recipe_name, player)
 		style="bold_label_style"
 	}
 	for _, ingredient in pairs(recipe.ingredients) do
-		add_sprite_and_label(recipe_scroll, ingredient, true, "auto", i)
+		add_sprite_and_label(recipe_scroll, ingredient, true, nil, nil, "auto", i)
 		i = i + 1
 	end
 
@@ -393,7 +399,7 @@ function show_recipe_details(recipe_name, player)
 		style="bold_label_style"
 	}
 	for _, product in pairs(recipe.products) do
-		add_sprite_and_label(recipe_scroll, product, true, "auto", i)
+		add_sprite_and_label(recipe_scroll, product, true, nil, nil, "auto", i)
 		i = i + 1
 	end
 
@@ -402,9 +408,32 @@ function show_recipe_details(recipe_name, player)
 		type="label", name="wiiuf_recipe_machines_heading", caption={"wiiuf_recipe_machines_heading"},
 		style="bold_label_style"
 	}
-	for _, machine in pairs(get_machines_for_recipe(recipe, player)) do
-		add_sprite_and_label(recipe_scroll, machine, false, "item", i)
-		i = i + 1
+	local machines = get_machines_for_recipe(recipe, player)
+	-- Figure out which machines are available at current tech
+	local machine_unlocks = {}
+	for name, recipe in pairs(player.force.recipes) do
+		for _, product in pairs(recipe.products) do
+			if machines[product.name] then
+				if recipe.enabled then
+					machine_unlocks[product.name] = "already_unlocked"
+				else
+					machine_unlocks[product.name] = find_technology(recipe.name, player)
+				end
+			end
+		end
+	end
+	for _, machine in pairs(machines) do
+		local unlock = machine_unlocks[machine.name]
+		if unlock then
+			local tooltip = nil
+			local style = nil
+			if unlock ~= "already_unlocked" then
+				style = "invalid_label_style"
+				tooltip = {"behind_research", unlock}
+			end
+			add_sprite_and_label(recipe_scroll, machine, false, style, tooltip, "item", i)
+			i = i + 1
+		end
 	end
 
 end
