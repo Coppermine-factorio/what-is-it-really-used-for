@@ -440,11 +440,11 @@ function get_wiiuf_flow(player)
 end
 
 function add_top_button(player)
+	if player.gui.top.wiiuf_flow then player.gui.top.wiiuf_flow.destroy() end -- remove the old flow
+
 	local flow = get_wiiuf_flow(player)
 	if global.n_fluids < 10 then flow.direction = "vertical" else flow.direction = "horizontal" end
 
-	if flow["looking-glass"] then flow["looking-glass"].destroy()	end -- remove the old 1.0.x button
-	
 	if flow["search_flow"] then flow["search_flow"].destroy() end
 	local search_flow = flow.add{type = "flow", name = "search_flow", direction = "horizontal"}
 	search_flow.add{type = "flow", name = "search_bar_placeholder", direction = "vertical"}
