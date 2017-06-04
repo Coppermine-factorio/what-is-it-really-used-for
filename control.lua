@@ -326,7 +326,7 @@ function show_recipe_details(recipe_name, player)
 
 	-- A generic function for adding an item to the list in the recipe pane
 
-	function add_sprite_and_label(add_to, thing_to_add, sprite_dir, i)
+	function add_sprite_and_label(add_to, thing_to_add, with_amount, sprite_dir, i)
 		if sprite_dir == "auto" then
 			if game.item_prototypes[thing_to_add.name] then
 				sprite_dir = "item"
@@ -362,8 +362,12 @@ function show_recipe_details(recipe_name, player)
 		if not(ok) then
 			player.print("Sprite missing: "..sprite)
 		end
+		local caption = localised_name
+		if with_amount then
+			caption = {"wiiuf_recipe_entry", thing_to_add.amount, localised_name}
+		end
 		local label = table.add{
-			type="label", name="wiiuf_recipe_item_label_"..thing_to_add.name, caption=localised_name,
+			type="label", name="wiiuf_recipe_item_label_"..thing_to_add.name, caption=caption,
 			single_line=false
 		}
 		label.style.maximal_width = 249
@@ -371,7 +375,7 @@ function show_recipe_details(recipe_name, player)
 
 	local i = 0
 
-	add_sprite_and_label(recipe_scroll, recipe, "recipe", i)
+	add_sprite_and_label(recipe_scroll, recipe, false, "recipe", i)
 	i = i + 1
 	-- First add ingredients
 	recipe_scroll.add{
@@ -379,7 +383,7 @@ function show_recipe_details(recipe_name, player)
 		style="bold_label_style"
 	}
 	for _, ingredient in pairs(recipe.ingredients) do
-		add_sprite_and_label(recipe_scroll, ingredient, "auto", i)
+		add_sprite_and_label(recipe_scroll, ingredient, true, "auto", i)
 		i = i + 1
 	end
 
@@ -389,7 +393,7 @@ function show_recipe_details(recipe_name, player)
 		style="bold_label_style"
 	}
 	for _, product in pairs(recipe.products) do
-		add_sprite_and_label(recipe_scroll, product, "auto", i)
+		add_sprite_and_label(recipe_scroll, product, true, "auto", i)
 		i = i + 1
 	end
 
@@ -399,7 +403,7 @@ function show_recipe_details(recipe_name, player)
 		style="bold_label_style"
 	}
 	for _, machine in pairs(get_machines_for_recipe(recipe, player)) do
-		add_sprite_and_label(recipe_scroll, machine, "item", i)
+		add_sprite_and_label(recipe_scroll, machine, false, "item", i)
 		i = i + 1
 	end
 
