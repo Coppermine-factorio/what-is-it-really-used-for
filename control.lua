@@ -34,8 +34,8 @@ function get_machines_for_recipe(recipe, player)
 	local recipe_category = recipe.category
 
 	for _, entity in pairs(game.entity_prototypes) do
-		if entity.crafting_categories then
-			if entity.crafting_categories[recipe_category] then
+		if entity.crafting_categories and entity.ingredient_count then
+			if entity.crafting_categories[recipe_category] and entity.ingredient_count >= #recipe.ingredients then
 				factories[entity.name] = entity
 			end
 		end
