@@ -516,6 +516,14 @@ end)
 script.on_event(defines.events.on_gui_click, function(event)
 	local player = game.players[event.player_index]
 	local flow = get_wiiuf_flow(player)
+
+	-- There was a report that the search flow spontaneously vanished during a
+	-- game (possibly another mod messed with it?).  Check for that and recreate
+	-- as necessary
+	if not flow.search_flow then
+		add_top_button(player)
+	end
+
 	if event.element.name == "looking-glass" then
 		if player.cursor_stack.valid_for_read then
 			identify(player.cursor_stack.name, player)
