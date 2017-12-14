@@ -75,7 +75,7 @@ function add_recipe_to_list(recipe, table, player)
 		label.style.minimal_height = 39
 		label.style.maximal_width = 249
 		if not recipe.enabled then
-			label.style = "invalid_label_style"
+			label.style = "invalid_label"
 			label.tooltip = {"behind_research", from_research}
 		elseif recipe.hidden then
 			label.style = "wiiuf_hidden_label_style"
@@ -174,13 +174,13 @@ function identify(item, player, side)
 	end
 	
 	title_flow.add{type = "sprite", name = "wiiuf_title_sprite", sprite = sprite}
-	title_flow.add{type = "label", name = "wiiuf_title_label", caption = localised_name, style = "frame_caption_label_style"}
+	title_flow.add{type = "label", name = "wiiuf_title_label", caption = localised_name, style = "frame_caption_label"}
 	
 	-- buttons
-	local button_style = "slot_button_style"
-	if side then button_style = "search_button_style" end
+	local button_style = "slot_button"
+	if side then button_style = "search_button" end
 	
-	button_style = "small_slot_button_style"
+	button_style = "small_slot_button"
 	
 	title_flow.add{type = "sprite-button", name = "wiiuf_minimise_" .. item, sprite = "arrow-bar", style = button_style, tooltip = {"minimise"}}
 	if side then
@@ -195,10 +195,10 @@ function identify(item, player, side)
 	if side then
 		local body_scroll = main_frame.add{type = "scroll-pane", name = "wiiuf_body_scroll"}
 		body_scroll.style.maximal_width = 250
-		body_scroll.vertical_scroll_policy = "never"
-		body_flow = body_scroll.add{type = "flow", name = "wiiuf_body_flow", direction = "horizontal", style = "achievements_flow_style"}
+		-- body_scroll.vertical_scroll_policy = "never"
+		body_flow = body_scroll.add{type = "flow", name = "wiiuf_body_flow", direction = "horizontal", style = "slot_table_spacing_horizontal_flow"}
 	else
-		body_flow = main_frame.add{type = "flow", name = "wiiuf_body_flow", direction = "horizontal", style = "achievements_flow_style"}
+		body_flow = main_frame.add{type = "flow", name = "wiiuf_body_flow", direction = "horizontal", style = "slot_table_spacing_horizontal_flow"}
 	end
 
 	-- mined from
@@ -207,7 +207,7 @@ function identify(item, player, side)
 		local mined_scroll = mined_frame.add{type = "scroll-pane", name = "wiiuf_mined_scroll"}
 		mined_scroll.style.minimal_height = table_height
 		mined_scroll.style.maximal_height = table_height
-		local mined_table = mined_scroll.add{type = "table", name = "wiiuf_mined_table", colspan = 2}
+		local mined_table = mined_scroll.add{type = "table", name = "wiiuf_mined_table", column_count = 2}
 		for i, entity in pairs(mined_from) do
 			mined_table.add{type = "sprite", name = "wiiuf_sprite_" .. i, sprite = "entity/"..entity.name}
 			local label = mined_table.add{type = "label", name = "wiiuf_label_" .. i, caption = entity.localised_name}
@@ -220,7 +220,7 @@ function identify(item, player, side)
 		local looted_scroll = looted_frame.add{type = "scroll-pane", name = "wiiuf_looted_scroll"}
 		looted_scroll.style.minimal_height = table_height
 		looted_scroll.style.maximal_height = table_height
-		local looted_table = looted_scroll.add{type = "table", name = "wiiuf_looted_table", colspan = 2}
+		local looted_table = looted_scroll.add{type = "table", name = "wiiuf_looted_table", column_count = 2}
 		for i, entity in pairs(looted_from) do
 			looted_table.add{type = "sprite", name = "wiiuf_sprite_" .. i, sprite = "entity/"..entity.name}
 			local label = looted_table.add{type = "label", name = "wiiuf_label_" .. i, caption = entity.localised_name}
@@ -241,7 +241,7 @@ function identify(item, player, side)
 	local ingredient_frame = body_flow.add{type = "frame", name = "wiiuf_ingredient_frame", caption = {"ingredient_in"}}
 	local ingredient_scroll = ingredient_frame.add{type = "scroll-pane", name = "wiiuf_ingredient_scroll"}
 	set_scroll_dimensions(ingredient_scroll)
-	local ingredient_table = ingredient_scroll.add{type = "table", name = "wiiuf_ingredient_table", colspan = 2}
+	local ingredient_table = ingredient_scroll.add{type = "table", name = "wiiuf_ingredient_table", column_count = 2}
 	local is_ingredient = false
 	for i, recipe in pairs(ingredient_in) do
 		if add_recipe_to_list(recipe, ingredient_table, player) then
@@ -257,7 +257,7 @@ function identify(item, player, side)
 	local product_frame = body_flow.add{type = "frame", name = "wiiuf_product_frame", caption = {"product_of"}}
 	local product_scroll = product_frame.add{type = "scroll-pane", name = "wiiuf_product_scroll"}
 	set_scroll_dimensions(product_scroll)
-	local product_table = product_scroll.add{type = "table", name = "wiiuf_product_table", colspan = 2}
+	local product_table = product_scroll.add{type = "table", name = "wiiuf_product_table", column_count = 2}
 	local num_product_recipes = 0
 	for i, recipe in pairs(product_of) do
 		if add_recipe_to_list(recipe, product_table, player) then
@@ -349,7 +349,9 @@ function show_recipe_details(recipe_name, player)
 		elseif sprite_dir == "fluid" then
 			localised_name = game.fluid_prototypes[thing_to_add.name].localised_name
 		end
-		local table = add_to.add{type="table", name="wiiuf_recipe_table_"..i, colspan=2}
+		local table = add_to.add{
+			type="table", name="wiiuf_recipe_table_"..i, column_count=2
+		}
 		-- In case the sprite does not exist we use pcall to catch the exception
 		-- and don't have a sprite (thanks to Helfima/Helmod for the trick).
 		local sprite = sprite_dir.."/"..thing_to_add.name
@@ -394,7 +396,7 @@ function show_recipe_details(recipe_name, player)
 	-- First add ingredients
 	recipe_scroll.add{
 		type="label", name="wiiuf_recipe_ingredients_heading", caption={"wiiuf_recipe_ingredients_heading"},
-		style="bold_label_style"
+		style="bold_label"
 	}
 	for _, ingredient in pairs(recipe.ingredients) do
 		add_sprite_and_label(recipe_scroll, ingredient, true, nil, nil, "auto", i)
@@ -404,7 +406,7 @@ function show_recipe_details(recipe_name, player)
 	-- Next add products
 	recipe_scroll.add{
 		type="label", name="wiiuf_recipe_products_heading", caption={"wiiuf_recipe_products_heading"},
-		style="bold_label_style"
+		style="bold_label"
 	}
 	for _, product in pairs(recipe.products) do
 		add_sprite_and_label(recipe_scroll, product, true, nil, nil, "auto", i)
@@ -414,7 +416,7 @@ function show_recipe_details(recipe_name, player)
 	-- Finally add machines
 	recipe_scroll.add{
 		type="label", name="wiiuf_recipe_machines_heading", caption={"wiiuf_recipe_machines_heading"},
-		style="bold_label_style"
+		style="bold_label"
 	}
 	local machines = get_machines_for_recipe(recipe, player)
 	-- Figure out which machines are available at current tech
@@ -436,7 +438,7 @@ function show_recipe_details(recipe_name, player)
 			local tooltip = nil
 			local style = nil
 			if unlock ~= "already_unlocked" then
-				style = "invalid_label_style"
+				style = "invalid_label"
 				tooltip = {"behind_research", unlock}
 			end
 			add_sprite_and_label(recipe_scroll, machine, false, style, tooltip, "item", i)
@@ -449,8 +451,13 @@ end
 function minimise(item, player, from_side)
 	if not player.gui.left.wiiuf_item_flow then
 		local item_flow = player.gui.left.add{type = "scroll-pane", name = "wiiuf_item_flow", style = "small_spacing_scroll_pane_style"}
-		local item_table = item_flow.add{type = "table", colspan = 1, name = "wiiuf_item_table", style = "slot_table_style"}
-		item_table.add{type = "sprite-button", name = "wiiuf_close", sprite = "close", style = "slot_button_style", tooltip = {"close"}}
+		local item_table = item_flow.add{
+			type = "table",
+			column_count = 1,
+			name = "wiiuf_item_table",
+			style = "slot_table"
+		}
+		item_table.add{type = "sprite-button", name = "wiiuf_close", sprite = "close", style = "slot_button", tooltip = {"close"}}
 		item_flow.style.maximal_height = 350
 	end	
 	
@@ -464,7 +471,7 @@ function minimise(item, player, from_side)
 		localised_name = game.fluid_prototypes[item].localised_name
 	end
 	if not player.gui.left.wiiuf_item_flow.wiiuf_item_table["wiiuf_show_" .. item] then
-		player.gui.left.wiiuf_item_flow.wiiuf_item_table.add{type = "sprite-button", name = "wiiuf_show_" .. item, sprite = sprite, tooltip = {"show", localised_name}, style = "slot_button_style"}
+		player.gui.left.wiiuf_item_flow.wiiuf_item_table.add{type = "sprite-button", name = "wiiuf_show_" .. item, sprite = sprite, tooltip = {"show", localised_name}, style = "slot_button"}
 	end
 	if not from_side and player.gui.center.wiiuf_center_frame then player.gui.center.wiiuf_center_frame.destroy() end
 	local mod_frame_flow = mod_gui.get_frame_flow(player)
@@ -474,8 +481,14 @@ end
 function get_wiiuf_flow(player)
 	local button_flow = mod_gui.get_button_flow(player)
 	local flow = button_flow.wiiuf_flow
+	local direction = "horizontal"
+	if global.n_fluids < 10 then
+		direction = "vertical"
+	end
 	if not flow then
-		flow = button_flow.add{type = "flow", name = "wiiuf_flow"}
+		flow = button_flow.add{
+			type = "flow", name = "wiiuf_flow", direction = direction
+		}
 	end
 	return flow
 end
@@ -484,7 +497,6 @@ function add_top_button(player)
 	if player.gui.top.wiiuf_flow then player.gui.top.wiiuf_flow.destroy() end -- remove the old flow
 
 	local flow = get_wiiuf_flow(player)
-	if global.n_fluids < 10 then flow.direction = "vertical" else flow.direction = "horizontal" end
 
 	if flow["search_flow"] then flow["search_flow"].destroy() end
 	local search_flow = flow.add{type = "flow", name = "search_flow", direction = "horizontal"}
@@ -530,9 +542,9 @@ script.on_event(defines.events.on_gui_click, function(event)
 		else
 			if flow.fluids_table then flow.fluids_table.destroy()
 			else
-				local fluids_table = flow.add{type = "table", colspan = math.ceil(global.n_fluids/10), name = "fluids_table", style = "slot_table_style"}
+				local fluids_table = flow.add{type = "table", column_count = math.ceil(global.n_fluids/10), name = "fluids_table", style = "slot_table"}
 				for _, fluid in pairs(game.fluid_prototypes) do
-					fluids_table.add{type = "sprite-button", name = "wiiuf_fluid_" .. fluid.name, sprite = "fluid/"..fluid.name, style = "slot_button_style", tooltip = fluid.localised_name}
+					fluids_table.add{type = "sprite-button", name = "wiiuf_fluid_" .. fluid.name, sprite = "fluid/"..fluid.name, style = "slot_button", tooltip = fluid.localised_name}
 				end
 			end
 		end
@@ -617,7 +629,7 @@ script.on_event(defines.events.on_gui_text_changed, function(event)
 			type = "scroll-pane", name = "search_bar_scroll", style = "small_spacing_scroll_pane_style"
 		}
 		scroll_pane.style.maximal_height = 250
-		local results_table = scroll_pane.add{type = "table", name = "results_table", colspan = 2, style = "row_table_style"}
+		local results_table = scroll_pane.add{type = "table", name = "results_table", column_count = 2, style = "row_table_style"}
 		
 		-- The first row of the table is regarded as the table headers and don't get the table style applied to them
 		-- We don't want this however, so we fill it in with blanks.

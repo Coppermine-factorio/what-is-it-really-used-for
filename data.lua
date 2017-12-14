@@ -71,11 +71,10 @@ data:extend({
 data.raw["gui-style"].default.small_spacing_scroll_pane_style = 
     {
       type = "scroll_pane_style",
-      parent = "scroll_pane_style",
+      parent = "scroll_pane",
 	  top_padding  = 2,
 	  left_padding = 0,
-	  right_padding = 0,
-	  flow_style = {"slot_table_spacing_flow_style"}
+	  right_padding = 0
     }
 data.raw["gui-style"].default.row_table_style = 
     {
