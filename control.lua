@@ -481,13 +481,9 @@ end
 function get_wiiuf_flow(player)
 	local button_flow = mod_gui.get_button_flow(player)
 	local flow = button_flow.wiiuf_flow
-	local direction = "horizontal"
-	if global.n_fluids < 10 then
-		direction = "vertical"
-	end
 	if not flow then
 		flow = button_flow.add{
-			type = "flow", name = "wiiuf_flow", direction = direction
+			type = "flow", name = "wiiuf_flow", direction = "horizontal"
 		}
 	end
 	return flow
