@@ -608,7 +608,8 @@ script.on_event("inspect_item", function(event)
 			flow.search_flow.search_bar_placeholder.search_bar_textfield.destroy()
 			if flow.search_flow.search_bar_placeholder.search_bar_scroll then flow.search_flow.search_bar_placeholder.search_bar_scroll.destroy() end
 		else
-			flow.search_flow.search_bar_placeholder.add{type = "textfield", name = "search_bar_textfield"}
+			local text_field = flow.search_flow.search_bar_placeholder.add{type = "textfield", name = "search_bar_textfield"}
+			text_field.focus()
 		end
 	end
 end)
