@@ -152,7 +152,12 @@ function identify(item, player, side)
 	-- Create center frame
 	local main_frame = {}
 	if not side then
-		main_frame = player.gui.center.add{type = "frame", name = "wiiuf_center_frame", direction = "vertical"}
+		main_frame = player.gui.center.add{
+			type = "frame", name = "wiiuf_center_frame", direction = "vertical"
+		}
+		-- Register this frame as GUI so it will be closed by usual GUI close
+		-- controls
+		player.opened = main_frame
 	else
 		main_frame = mod_gui.get_frame_flow(player).add{
 			type = "frame", name = "wiiuf_left_frame", direction = "vertical"
@@ -654,6 +659,15 @@ script.on_event(defines.events.on_gui_text_changed, function(event)
 				label.style.minimal_width = 101
 			end
 		end
+	end
+end)
+
+script.on_event(defines.events.on_gui_closed, function(event)
+	-- If our window was the currently open window, we need to destroy it on
+	-- close
+	if event.gui_type == defines.gui_type.custom and event.element and
+		event.element.name == "wiiuf_center_frame" then
+		event.element.destroy()
 	end
 end)
 
