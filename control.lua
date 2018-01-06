@@ -196,7 +196,7 @@ function identify(item, player, side)
 	title_flow.add{
 		type = "sprite-button",
 		name = "wiiuf_minimise_" .. item,
-		sprite = "arrow-bar",
+		sprite = "arrow-box",
 		style = button_style,
 		tooltip = {"minimise"}
 	}
@@ -213,7 +213,7 @@ function identify(item, player, side)
 		title_flow.add{
 			type = "sprite-button",
 			name = "wiiuf_pin_" .. item,
-			sprite = "arrow-left",
+			sprite = "arrow-bar",
 			style = button_style,
 			tooltip = {"pin"}
 		}

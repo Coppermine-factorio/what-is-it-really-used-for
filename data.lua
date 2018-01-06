@@ -46,6 +46,15 @@ data:extend({
   },
   {
     type = "sprite",
+    name = "arrow-box",
+	filename = "__what-is-it-really-used-for__/graphics/arrow_box.png",
+	priority = "extra-high-no-scale",
+	width = 32,
+	height = 32,
+	scale = 1,
+  },
+  {
+    type = "sprite",
     name = "close",
 	filename = "__what-is-it-really-used-for__/graphics/close.png",
 	priority = "extra-high-no-scale",
