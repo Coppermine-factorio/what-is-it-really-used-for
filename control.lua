@@ -183,16 +183,32 @@ function identify(item, player, side)
 		sprite = "fluid/"..item
 		localised_name = game.fluid_prototypes[item].localised_name
 	end
-	
+
+	local button_style = "small_slot_button"
+
+	local history = global.wiiuf_item_history[player.index]
+	if history.position > 1 then
+		title_flow.add{
+			type = "sprite-button",
+			name = "wiiuf_back",
+			sprite = "arrow-left",
+			style = button_style,
+			tooltip = {"back"}
+		}
+	end
+	if history.position < #history.list then
+		title_flow.add{
+			type = "sprite-button",
+			name = "wiiuf_forward",
+			sprite = "arrow-right",
+			style = button_style,
+			tooltip = {"forward"}
+		}
+	end
+
 	title_flow.add{type = "sprite", name = "wiiuf_title_sprite", sprite = sprite}
 	title_flow.add{type = "label", name = "wiiuf_title_label", caption = localised_name, style = "frame_caption_label"}
-	
-	-- buttons
-	local button_style = "slot_button"
-	if side then button_style = "search_button" end
-	
-	button_style = "small_slot_button"
-	
+
 	title_flow.add{
 		type = "sprite-button",
 		name = "wiiuf_minimise_" .. item,
@@ -226,26 +242,6 @@ function identify(item, player, side)
 		style = button_style,
 		tooltip = {"close"}
 	}
-
-	local history = global.wiiuf_item_history[player.index]
-	if history.position > 1 then
-		title_flow.add{
-			type = "sprite-button",
-			name = "wiiuf_back",
-			sprite = "arrow-left",
-			style = button_style,
-			tooltip = {"back"}
-		}
-	end
-	if history.position < #history.list then
-		title_flow.add{
-			type = "sprite-button",
-			name = "wiiuf_forward",
-			sprite = "arrow-right",
-			style = button_style,
-			tooltip = {"forward"}
-		}
-	end
 
 	-- Body flow
 	local body_flow = {}
