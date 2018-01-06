@@ -210,7 +210,41 @@ function identify(item, player, side)
 			tooltip = {"show", localised_name}
 		}
 	else
-		title_flow.add{type = "sprite-button", name = "wiiuf_pin_" .. item, sprite = "arrow-left", style = button_style, tooltip = {"pin"}}
+		title_flow.add{
+			type = "sprite-button",
+			name = "wiiuf_pin_" .. item,
+			sprite = "arrow-left",
+			style = button_style,
+			tooltip = {"pin"}
+		}
+	end
+
+	title_flow.add{
+		type = "sprite-button",
+		name = "wiiuf_close",
+		sprite = "close",
+		style = button_style,
+		tooltip = {"close"}
+	}
+
+	local history = global.wiiuf_item_history[player.index]
+	if history.position > 1 then
+		title_flow.add{
+			type = "sprite-button",
+			name = "wiiuf_back",
+			sprite = "arrow-left",
+			style = button_style,
+			tooltip = {"back"}
+		}
+	end
+	if history.position < #history.list then
+		title_flow.add{
+			type = "sprite-button",
+			name = "wiiuf_forward",
+			sprite = "arrow-right",
+			style = button_style,
+			tooltip = {"forward"}
+		}
 	end
 
 	-- Body flow
@@ -308,6 +342,34 @@ function identify(item, player, side)
 		}
 		label.style.maximal_width = 249
 	end
+end
+
+function identify_and_add_to_history(item, player, side, should_clear_history)
+	-- If it's not actually an item, do nothing
+	-- This can happen if you click the recipe name on the recipe pane
+	if not game.item_prototypes[item] and not game.fluid_prototypes[item] then
+		return
+	end
+
+	local history
+	if should_clear_history then
+		clear_history(player)
+		history = global.wiiuf_item_history[player.index]
+	else
+		-- Truncate the history by deleting anything after the present entry
+		history = global.wiiuf_item_history[player.index]
+		while #history.list > history.position do
+			history.list[#history.list] = nil
+		end
+	end
+
+	-- Then add this to the end if it's not already there
+	if history.list[#history.list] ~= item then
+		table.insert(history.list, item)
+		history.position = history.position + 1
+	end
+
+	identify(item, player, side)
 end
 
 function show_recipe_details(recipe_name, player)
@@ -524,9 +586,25 @@ function add_top_button(player)
 
 	if flow["search_flow"] then flow["search_flow"].destroy() end
 	local search_flow = flow.add{type = "flow", name = "search_flow", direction = "horizontal"}
-	search_flow.add{type = "flow", name = "search_bar_placeholder", direction = "vertical"}
-	search_flow.add{type = "sprite-button", name = "looking-glass", sprite = "looking-glass", style = mod_gui.button_style, tooltip = {"top_button_tooltip"}}
+	search_flow.add{
+		type = "flow",
+		name = "search_bar_placeholder",
+		direction = "vertical"
+	}
+	search_flow.add{
+		type = "sprite-button",
+		name = "looking-glass",
+		sprite = "looking-glass",
+		style = mod_gui.button_style,
+		tooltip = {"top_button_tooltip"}
+	}
+end
 
+function clear_history(player)
+	global.wiiuf_item_history[player.index] = {
+		position = 0,
+		list = {}
+	}
 end
 
 script.on_init(function()
@@ -534,7 +612,11 @@ script.on_init(function()
 	for _ in pairs(game.fluid_prototypes) do
 		global.n_fluids = global.n_fluids +1
 	end
-	for _, player in pairs(game.players) do add_top_button(player) end
+	global.wiiuf_item_history = {}
+	for _, player in pairs(game.players) do
+		add_top_button(player)
+		clear_history(player)
+	end
 end)
 
 script.on_configuration_changed(function()
@@ -546,7 +628,9 @@ script.on_configuration_changed(function()
 end)
 
 script.on_event(defines.events.on_player_created, function(event)
-	add_top_button(game.players[event.player_index])
+	local player = game.players[event.player_index]
+	add_top_button(player)
+	clear_history(player)
 end)
 
 script.on_event(defines.events.on_gui_click, function(event)
@@ -562,7 +646,7 @@ script.on_event(defines.events.on_gui_click, function(event)
 
 	if event.element.name == "looking-glass" then
 		if player.cursor_stack.valid_for_read then
-			identify(player.cursor_stack.name, player)
+			identify_and_add_to_history(player.cursor_stack.name, player, false, true)
 		else
 			if flow.fluids_table then flow.fluids_table.destroy()
 			else
@@ -575,11 +659,11 @@ script.on_event(defines.events.on_gui_click, function(event)
 	
 	--Label for fluid in search results. Check it before root "wiiuf_fluid_"
 	elseif event.element.name:find("wiiuf_fluid_label_") then
-		identify(event.element.name:sub(19), player)
+		identify_and_add_to_history(event.element.name:sub(19), player, false, true)
 	
 	--Sprite for fluid in search results
 	elseif event.element.name:find("wiiuf_fluid_") then
-		identify(event.element.name:sub(13), player)
+		identify_and_add_to_history(event.element.name:sub(13), player, false, true)
 		if flow.fluids_table then flow.fluids_table.destroy() end
 	
 	elseif event.element.name == "wiiuf_close" then
@@ -590,7 +674,8 @@ script.on_event(defines.events.on_gui_click, function(event)
 	
 	-- Unminimizing button
 	elseif event.element.name:find("wiiuf_show_") then
-		identify(event.element.name:sub(12), player)
+		identify_and_add_to_history(
+			event.element.name:sub(12), player, false, false)
 		if event.element.parent.name == "wiiuf_item_table" then 
 			event.element.destroy()
 			if #player.gui.left.wiiuf_item_flow.wiiuf_item_table.children_names == 1 then
@@ -600,30 +685,56 @@ script.on_event(defines.events.on_gui_click, function(event)
 		end
 	
 	elseif event.element.name:find("wiiuf_pin_") then
-		identify(event.element.name:sub(11), player, true)
-		
+		identify_and_add_to_history(
+			event.element.name:sub(11), player, true, false)
+
 	--Sprite for item in search results
 	elseif event.element.name:find("wiiuf_item_sprite_") then
-		identify(event.element.name:sub(19), player)
+		identify_and_add_to_history(
+			event.element.name:sub(19), player, false, true)
 		flow.search_flow.search_bar_placeholder.search_bar_scroll.destroy()
 		flow.search_flow.search_bar_placeholder.search_bar_textfield.destroy()
+
 	--Label for item in search results
 	elseif event.element.name:find("wiiuf_item_label_") then
-		identify(event.element.name:sub(18), player)
+		identify_and_add_to_history(
+			event.element.name:sub(18), player, false, true)
 		flow.search_flow.search_bar_placeholder.search_bar_scroll.destroy()
 		flow.search_flow.search_bar_placeholder.search_bar_textfield.destroy()
+
 	-- Sprite for recipe in list
 	elseif event.element.name:find("wiiuf_recipe_sprite_") then
 		show_recipe_details(event.element.name:sub(21), player)
+
 	-- Label for recipe in list
 	elseif event.element.name:find("wiiuf_recipe_label_") then
 		show_recipe_details(event.element.name:sub(20), player)
+
 	-- Sprite for item in recipe view
 	elseif event.element.name:find("wiiuf_recipe_item_sprite_") then
-		identify(event.element.name:sub(26), player)
+		identify_and_add_to_history(
+			event.element.name:sub(26), player, false, false)
+
 	-- Label for item in recipe view
 	elseif event.element.name:find("wiiuf_recipe_item_label_") then
-		identify(event.element.name:sub(25), player)
+		identify_and_add_to_history(
+			event.element.name:sub(25), player, false, false)
+
+	-- Back through item history
+	elseif event.element.name == "wiiuf_back" then
+		local history = global.wiiuf_item_history[player.index]
+		if history.position > 1 then
+			history.position = history.position - 1
+		end
+		identify(history.list[history.position], player)
+
+	-- Forward through item history
+	elseif event.element.name == "wiiuf_forward" then
+		local history = global.wiiuf_item_history[player.index]
+		if history.position < #history.list then
+			history.position = history.position + 1
+		end
+		identify(history.list[history.position], player)
 	end
 end)
 
@@ -631,7 +742,8 @@ script.on_event("inspect_item", function(event)
 	local player = game.players[event.player_index]
 	local flow = get_wiiuf_flow(player)
 	if player.cursor_stack.valid_for_read then
-		identify(player.cursor_stack.name, player)
+		clear_history(player)
+		identify_and_add_to_history(player.cursor_stack.name, player, true)
 	else
 		if flow.search_flow.search_bar_placeholder.search_bar_textfield then
 			flow.search_flow.search_bar_placeholder.search_bar_textfield.destroy()
