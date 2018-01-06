@@ -11,10 +11,10 @@ function find_technology(recipe, player)
 						if tech.enabled then
 							return tech.localised_name
 						else
-							if SHOW_ALL then 
+							if SHOW_ALL then
 								return {"disabled_tech", tech.localised_name}
-							else 
-								return false 
+							else
+								return false
 							end
 						end
 					end
@@ -534,17 +534,26 @@ function show_recipe_details(recipe_name, player)
 	local i = 0
 
 	local recipe_style = nil
-	local recipe_tooltip = nil
+	local unlock = nil
 	if not recipe.enabled then
-		local unlock = find_technology(recipe.name, player)
+		unlock = find_technology(recipe.name, player)
 		recipe_style = "invalid_label"
-		recipe_tooltip = {"behind_research", unlock}
 	end
 
 	add_sprite_and_label(
-		recipe_scroll, recipe, false, recipe_style, recipe_tooltip, "recipe", i
+		recipe_scroll, recipe, false, recipe_style, nil, "recipe", i
 	)
 	i = i + 1
+
+	if not recipe.enabled and unlock then
+		recipe_scroll.add{
+			type="label",
+			name="wiiuf_recipe_unlock_warning",
+			caption={"behind_research", unlock},
+			style="invalid_label"
+		}
+	end
+
 	-- First add ingredients
 	recipe_scroll.add{
 		type="label", name="wiiuf_recipe_ingredients_heading", caption={"wiiuf_recipe_ingredients_heading"},
