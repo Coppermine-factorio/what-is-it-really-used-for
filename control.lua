@@ -468,7 +468,7 @@ function show_recipe_details(recipe_name, player)
 
 	-- A generic function for adding an item to the list in the recipe pane
 
-	function add_sprite_and_label(add_to, thing_to_add, with_amount, style, tooltip, sprite_dir, i)
+	function add_sprite_and_label(add_to, thing_to_add, with_amount, style, tooltip, sprite_dir, i, force_decimals)
 		if sprite_dir == "auto" then
 			if game.item_prototypes[thing_to_add.name] then
 				sprite_dir = "item"
@@ -509,7 +509,9 @@ function show_recipe_details(recipe_name, player)
 		local caption = localised_name
 		if with_amount then
 			local amount = nil
-			if thing_to_add.amount then
+			if with_amount ~= true then
+				amount = with_amount
+			elseif thing_to_add.amount then
 				amount = thing_to_add.amount
 			elseif thing_to_add.amount_min and thing_to_add.amount_max then
 				amount = (thing_to_add.amount_min + thing_to_add.amount_max) / 2
@@ -520,7 +522,7 @@ function show_recipe_details(recipe_name, player)
 
 			if amount then
 				local formatted_amount = amount
-				if amount ~= math.floor(amount) then
+				if force_decimals or amount ~= math.floor(amount) then
 					formatted_amount = string.format("%.3f", amount)
 				end
 				caption = {"wiiuf_recipe_entry", formatted_amount, localised_name}
@@ -599,7 +601,10 @@ function show_recipe_details(recipe_name, player)
 				style = "invalid_label"
 				tooltip = {"behind_research", unlock}
 			end
-			add_sprite_and_label(recipe_scroll, machine, false, style, tooltip, "item", i)
+			local crafting_time = recipe.energy / machine.crafting_speed
+			add_sprite_and_label(
+				recipe_scroll, machine, crafting_time, style, tooltip, "item", i, true
+			)
 			i = i + 1
 		end
 	end
