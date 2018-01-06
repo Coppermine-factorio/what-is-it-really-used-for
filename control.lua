@@ -363,7 +363,7 @@ function identify(item, player, side)
 		end
 	end
 
-	if side and not is_product then
+	if side and num_product_recipes == 0 then
 		product_frame.destroy()
 	end
 
