@@ -253,7 +253,7 @@ function identify(item, player, side)
 	if side then
 		local body_scroll = main_frame.add{type = "scroll-pane", name = "wiiuf_body_scroll"}
 		body_scroll.style.maximal_width = 250
-		-- body_scroll.vertical_scroll_policy = "never"
+		body_scroll.vertical_scroll_policy = "never"
 		body_flow = body_scroll.add{type = "flow", name = "wiiuf_body_flow", direction = "horizontal", style = "slot_table_spacing_horizontal_flow"}
 	else
 		body_flow = main_frame.add{type = "flow", name = "wiiuf_body_flow", direction = "horizontal", style = "slot_table_spacing_horizontal_flow"}
@@ -327,6 +327,7 @@ function identify(item, player, side)
 	end
 
 	function set_scroll_dimensions(scroll)
+		scroll.horizontal_scroll_policy = "never"
 		scroll.style.minimal_height = table_height
 		scroll.style.maximal_height = table_height
 		if not side then
