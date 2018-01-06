@@ -533,7 +533,17 @@ function show_recipe_details(recipe_name, player)
 
 	local i = 0
 
-	add_sprite_and_label(recipe_scroll, recipe, false, nil, nil, "recipe", i)
+	local recipe_style = nil
+	local recipe_tooltip = nil
+	if not recipe.enabled then
+		local unlock = find_technology(recipe.name, player)
+		recipe_style = "invalid_label"
+		recipe_tooltip = {"behind_research", unlock}
+	end
+
+	add_sprite_and_label(
+		recipe_scroll, recipe, false, recipe_style, recipe_tooltip, "recipe", i
+	)
 	i = i + 1
 	-- First add ingredients
 	recipe_scroll.add{
