@@ -128,7 +128,9 @@ function identify(item, player, side)
 			end
 		end
 		
-		if (entity.type == "resource" or entity.type == "tree") and entity.mineable_properties and entity.mineable_properties.products then
+		if ((entity.type == "resource" or entity.type == "tree") and
+				entity.mineable_properties and
+				entity.mineable_properties.products) then
 			for _, product in pairs(entity.mineable_properties.products) do
 				if product.name == item then
 					table.insert(mined_from, entity)
@@ -144,11 +146,15 @@ function identify(item, player, side)
 	local section_width = 300
 	
 	-- GUI stuff
-	if player.gui.center.wiiuf_center_frame then player.gui.center.wiiuf_center_frame.destroy() end
+	if player.gui.center.wiiuf_center_frame then
+		player.gui.center.wiiuf_center_frame.destroy()
+	end
+
 	local mod_frame_flow = mod_gui.get_frame_flow(player)
-	if side and mod_frame_flow.wiiuf_left_frame then mod_frame_flow.wiiuf_left_frame.destroy() end
-	
-	
+	if side and mod_frame_flow.wiiuf_left_frame then
+		mod_frame_flow.wiiuf_left_frame.destroy()
+	end
+
 	-- Create center frame
 	local main_frame = {}
 	if not side then
@@ -187,13 +193,25 @@ function identify(item, player, side)
 	
 	button_style = "small_slot_button"
 	
-	title_flow.add{type = "sprite-button", name = "wiiuf_minimise_" .. item, sprite = "arrow-bar", style = button_style, tooltip = {"minimise"}}
+	title_flow.add{
+		type = "sprite-button",
+		name = "wiiuf_minimise_" .. item,
+		sprite = "arrow-bar",
+		style = button_style,
+		tooltip = {"minimise"}
+	}
+
 	if side then
-		title_flow.add{type = "sprite-button", name = "wiiuf_show_" .. item, sprite = "arrow-right", style = button_style, tooltip = {"show", localised_name}}
+		title_flow.add{
+			type = "sprite-button",
+			name = "wiiuf_show_" .. item,
+			sprite = "arrow-right",
+			style = button_style,
+			tooltip = {"show", localised_name}
+		}
 	else
 		title_flow.add{type = "sprite-button", name = "wiiuf_pin_" .. item, sprite = "arrow-left", style = button_style, tooltip = {"pin"}}
 	end
-	title_flow.add{type = "sprite-button", name = "wiiuf_close", sprite = "close", style = button_style, tooltip = {"close"}}
 
 	-- Body flow
 	local body_flow = {}
@@ -450,7 +468,6 @@ function show_recipe_details(recipe_name, player)
 			i = i + 1
 		end
 	end
-
 end
 
 function minimise(item, player, from_side)
@@ -476,7 +493,13 @@ function minimise(item, player, from_side)
 		localised_name = game.fluid_prototypes[item].localised_name
 	end
 	if not player.gui.left.wiiuf_item_flow.wiiuf_item_table["wiiuf_show_" .. item] then
-		player.gui.left.wiiuf_item_flow.wiiuf_item_table.add{type = "sprite-button", name = "wiiuf_show_" .. item, sprite = sprite, tooltip = {"show", localised_name}, style = "slot_button"}
+		player.gui.left.wiiuf_item_flow.wiiuf_item_table.add{
+			type = "sprite-button",
+			name = "wiiuf_show_" .. item,
+			sprite = sprite,
+			tooltip = {"show", localised_name},
+			style = "slot_button"
+		}
 	end
 	if not from_side and player.gui.center.wiiuf_center_frame then player.gui.center.wiiuf_center_frame.destroy() end
 	local mod_frame_flow = mod_gui.get_frame_flow(player)
@@ -565,6 +588,7 @@ script.on_event(defines.events.on_gui_click, function(event)
 	elseif event.element.name:find("wiiuf_minimise_") then
 		minimise(event.element.name:sub(16), player, event.element.parent.parent.name == "wiiuf_left_frame")
 	
+	-- Unminimizing button
 	elseif event.element.name:find("wiiuf_show_") then
 		identify(event.element.name:sub(12), player)
 		if event.element.parent.name == "wiiuf_item_table" then 
