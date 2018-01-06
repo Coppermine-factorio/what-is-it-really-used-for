@@ -2,72 +2,72 @@ data:extend({
   {
     type = "sprite",
     name = "looking-glass",
-	filename = "__what-is-it-really-used-for__/graphics/search-icon.png",
-	priority = "extra-high-no-scale",
-	width = 300,
-	height = 300,
-	scale = 1,
+    filename = "__what-is-it-really-used-for__/graphics/search-icon.png",
+    priority = "extra-high-no-scale",
+    width = 300,
+    height = 300,
+    scale = 1,
   },
   {
     type = "sprite",
     name = "questionmark",
-	filename = "__core__/graphics/questionmark.png",
-	priority = "extra-high-no-scale",
-	width = 64,
-	height = 64,
-	scale = 1,
+    filename = "__core__/graphics/questionmark.png",
+    priority = "extra-high-no-scale",
+    width = 64,
+    height = 64,
+    scale = 1,
   },
   {
     type = "sprite",
     name = "arrow-right",
-	filename = "__core__/graphics/goto-icon.png",
-	priority = "extra-high-no-scale",
-	width = 32,
-	height = 32,
-	scale = 1,
+    filename = "__core__/graphics/goto-icon.png",
+    priority = "extra-high-no-scale",
+    width = 32,
+    height = 32,
+    scale = 1,
   },
   {
     type = "sprite",
     name = "arrow-left",
-	filename = "__what-is-it-really-used-for__/graphics/arrow_left.png",
-	priority = "extra-high-no-scale",
-	width = 32,
-	height = 32,
-	scale = 1,
+    filename = "__what-is-it-really-used-for__/graphics/arrow_left.png",
+    priority = "extra-high-no-scale",
+    width = 32,
+    height = 32,
+    scale = 1,
   },
   {
     type = "sprite",
     name = "arrow-bar",
-	filename = "__what-is-it-really-used-for__/graphics/arrow_bar.png",
-	priority = "extra-high-no-scale",
-	width = 32,
-	height = 32,
-	scale = 1,
+    filename = "__what-is-it-really-used-for__/graphics/arrow_bar.png",
+    priority = "extra-high-no-scale",
+    width = 32,
+    height = 32,
+    scale = 1,
   },
   {
     type = "sprite",
     name = "arrow-box",
-	filename = "__what-is-it-really-used-for__/graphics/arrow_box.png",
-	priority = "extra-high-no-scale",
-	width = 32,
-	height = 32,
-	scale = 1,
+    filename = "__what-is-it-really-used-for__/graphics/arrow_box.png",
+    priority = "extra-high-no-scale",
+    width = 32,
+    height = 32,
+    scale = 1,
   },
   {
     type = "sprite",
     name = "close",
-	filename = "__what-is-it-really-used-for__/graphics/close.png",
-	priority = "extra-high-no-scale",
-	width = 64,
-	height = 64,
-	scale = 1,
+    filename = "__what-is-it-really-used-for__/graphics/close.png",
+    priority = "extra-high-no-scale",
+    width = 64,
+    height = 64,
+    scale = 1,
   },
   {
   type = "custom-input",
   name = "inspect_item",
   key_sequence = "CONTROL + F",
   consuming = "script-only"
-  
+
   -- 'consuming'
   -- available options:
   -- none: default if not defined
@@ -77,15 +77,15 @@ data:extend({
 }
 })
 
-data.raw["gui-style"].default.small_spacing_scroll_pane_style = 
+data.raw["gui-style"].default.small_spacing_scroll_pane_style =
     {
       type = "scroll_pane_style",
       parent = "scroll_pane",
-	  top_padding  = 2,
-	  left_padding = 0,
-	  right_padding = 0
+      top_padding  = 2,
+      left_padding = 0,
+      right_padding = 0
     }
-data.raw["gui-style"].default.row_table_style = 
+data.raw["gui-style"].default.row_table_style =
     {
       type = "table_style",
       cell_padding = 5,

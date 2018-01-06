@@ -829,9 +829,13 @@ script.on_event("inspect_item", function(event)
 	else
 		if flow.search_flow.search_bar_placeholder.search_bar_textfield then
 			flow.search_flow.search_bar_placeholder.search_bar_textfield.destroy()
-			if flow.search_flow.search_bar_placeholder.search_bar_scroll then flow.search_flow.search_bar_placeholder.search_bar_scroll.destroy() end
+			if flow.search_flow.search_bar_placeholder.search_bar_scroll then
+				flow.search_flow.search_bar_placeholder.search_bar_scroll.destroy()
+			end
 		else
-			local text_field = flow.search_flow.search_bar_placeholder.add{type = "textfield", name = "search_bar_textfield"}
+			local text_field = flow.search_flow.search_bar_placeholder.add{
+				type = "textfield", name = "search_bar_textfield"
+			}
 			text_field.focus()
 		end
 	end
@@ -841,38 +845,64 @@ script.on_event(defines.events.on_gui_text_changed, function(event)
 	if event.element.name == "search_bar_textfield" then
 		local player = game.players[event.player_index]
 		local flow = get_wiiuf_flow(player)
-		if flow.search_flow.search_bar_placeholder.search_bar_scroll then flow.search_flow.search_bar_placeholder.search_bar_scroll.destroy() end
+		if flow.search_flow.search_bar_placeholder.search_bar_scroll then
+			flow.search_flow.search_bar_placeholder.search_bar_scroll.destroy()
+		end
 		
 		if string.len(event.element.text) < 2 then return end
 		
 		local scroll_pane = flow.search_flow.search_bar_placeholder.add{
-			type = "scroll-pane", name = "search_bar_scroll", style = "small_spacing_scroll_pane_style"
+			type = "scroll-pane",
+			name = "search_bar_scroll",
+			style = "small_spacing_scroll_pane_style"
 		}
 		scroll_pane.style.maximal_height = 250
-		local results_table = scroll_pane.add{type = "table", name = "results_table", column_count = 2, style = "row_table_style"}
-		
-		-- The first row of the table is regarded as the table headers and don't get the table style applied to them
+		local results_table = scroll_pane.add{
+			type = "table",
+			name = "results_table_"..math.random(100),
+			column_count = 2,
+			style = "row_table_style"
+		}
+
+		-- The first row of the table is regarded as the table headers and don't
+		-- get the table style applied to them
 		-- We don't want this however, so we fill it in with blanks.
 		results_table.add{type = "label", name = "wiiuf_filler_label_1"}
 		results_table.add{type = "label", name = "wiiuf_filler_label_2"}
-		
+
 		-- remove capitals, purge special characters, and replace spaces with -
 		local text = event.element.text:lower()
 		text = text:gsub("([%^%$%(%)%%%.%[%]%*%+%-%?])", "%%%1")
 		text = text:gsub(" ", "%%-")
-		
+
 		for _, item in pairs(game.item_prototypes) do
 			if item.name:lower():find(text) then
-				results_table.add{type = "sprite", name = "wiiuf_item_sprite_" .. item.name, sprite = "item/"..item.name}
-				local label = results_table.add{type = "label", name = "wiiuf_item_label_" .. item.name, caption = item.localised_name}
+				results_table.add{
+					type = "sprite",
+					name = "wiiuf_item_sprite_" .. item.name,
+					sprite = "item/"..item.name
+				}
+				local label = results_table.add{
+					type = "label",
+					name = "wiiuf_item_label_" .. item.name,
+					caption = item.localised_name
+				}
 				label.style.minimal_height = 34
 				label.style.minimal_width = 101
 			end
 		end
 		for _, item in pairs(game.fluid_prototypes) do
 			if item.name:lower():find(text) then
-				results_table.add{type = "sprite", name = "wiiuf_fluid_" .. item.name, sprite = "fluid/"..item.name}
-				local label = results_table.add{type = "label", name = "wiiuf_fluid_label_" .. item.name, caption = item.localised_name}
+				results_table.add{
+					type = "sprite",
+					name = "wiiuf_fluid_" .. item.name,
+					sprite = "fluid/"..item.name
+				}
+				local label = results_table.add{
+					type = "label",
+					name = "wiiuf_fluid_label_" .. item.name,
+					caption = item.localised_name
+				}
 				label.style.minimal_height = 34
 				label.style.minimal_width = 101
 			end
