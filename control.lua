@@ -508,14 +508,22 @@ function show_recipe_details(recipe_name, player)
 		end
 		local caption = localised_name
 		if with_amount then
+			local amount = nil
 			if thing_to_add.amount then
-				caption = {"wiiuf_recipe_entry", thing_to_add.amount, localised_name}
+				amount = thing_to_add.amount
 			elseif thing_to_add.amount_min and thing_to_add.amount_max then
-				local expected_return = (thing_to_add.amount_min + thing_to_add.amount_max) / 2
+				amount = (thing_to_add.amount_min + thing_to_add.amount_max) / 2
 				if thing_to_add.probability then
-					expected_return = expected_return * thing_to_add.probability
+					amount = amount * thing_to_add.probability
 				end
-				caption = {"wiiuf_recipe_entry", expected_return, localised_name}
+			end
+
+			if amount then
+				local formatted_amount = amount
+				if amount ~= math.floor(amount) then
+					formatted_amount = string.format("%.3f", amount)
+				end
+				caption = {"wiiuf_recipe_entry", formatted_amount, localised_name}
 			end
 		end
 		local label = table.add{
