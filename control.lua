@@ -433,7 +433,9 @@ function show_recipe_details(recipe_name, player)
 	local recipe = player.force.recipes[recipe_name]
 
 	local main_frame = player.gui.center.wiiuf_center_frame
+	local side = false
 	if not main_frame then
+		side = true
 		main_frame = mod_gui.get_frame_flow(player).wiiuf_left_frame
 		if main_frame then
 			main_frame = main_frame.wiiuf_body_scroll
@@ -456,6 +458,7 @@ function show_recipe_details(recipe_name, player)
 	-- maybe configurable
 	local table_height = 350
 	local section_width = 300
+	if side then table_height = 250 end
 
 	local recipe_frame = body_flow.add{
 		type="frame", name="wiiuf_recipe_frame", caption={"wiiuf_recipe_details"}
