@@ -95,6 +95,7 @@ function identify(item, player, side)
 	
 	local ingredient_in = {}
 	local mined_from = {}
+	local pumped_from = {}
 	local looted_from = {}
 	local product_of = {}
 	
@@ -137,6 +138,10 @@ function identify(item, player, side)
 					break
 				end
 			end
+		end
+
+		if entity.fluid and entity.fluid.name == item then
+			pumped_from[entity.name] = entity
 		end
 	end
 	
@@ -267,6 +272,7 @@ function identify(item, player, side)
 			label.style.minimal_height = 34
 		end
 	end
+
 	-- looted from
 	if #looted_from > 0 then
 		local looted_frame = body_flow.add{type = "frame", name = "wiiuf_looted_frame", caption = {"looted_from"}}
@@ -277,6 +283,45 @@ function identify(item, player, side)
 		for i, entity in pairs(looted_from) do
 			looted_table.add{type = "sprite", name = "wiiuf_sprite_" .. i, sprite = "entity/"..entity.name}
 			local label = looted_table.add{type = "label", name = "wiiuf_label_" .. i, caption = entity.localised_name}
+			label.style.minimal_height = 34
+		end
+	end
+
+	-- pumped from
+	if next(pumped_from) then
+		local pumped_frame = body_flow.add{
+			type = "frame", name = "wiiuf_pumped_frame", caption = {"pumped_from"}
+		}
+		local pumped_scroll = pumped_frame.add{
+			type = "scroll-pane", name = "wiiuf_pumped_scroll"
+		}
+		pumped_scroll.style.minimal_height = table_height
+		pumped_scroll.style.maximal_height = table_height
+		local pumped_table = pumped_scroll.add{
+			type = "table", name = "wiiuf_pumped_table", column_count = 2
+		}
+		machine_unlocks = get_item_unlocks(pumped_from, player)
+		for i, entity in pairs(pumped_from) do
+			local unlock = machine_unlocks[entity.name]
+			local tooltip = nil
+			local style = nil
+			if unlock ~= "already_unlocked" then
+				style = "invalid_label"
+				tooltip = {"behind_research", unlock}
+			end
+			pumped_table.add{
+				type = "sprite",
+				name = "wiiuf_sprite_" .. i,
+				sprite = "entity/"..entity.name,
+				tooltip = tooltip
+			}
+			local label = pumped_table.add{
+				type = "label",
+				name = "wiiuf_label_" .. i,
+				caption = entity.localised_name,
+				style = style,
+				tooltip = tooltip
+			}
 			label.style.minimal_height = 34
 		end
 	end
@@ -366,6 +411,22 @@ function identify_and_add_to_history(item, player, side, should_clear_history)
 	end
 
 	identify(item, player, side)
+end
+
+function get_item_unlocks(items, player)
+	local item_unlocks = {}
+	for name, recipe in pairs(player.force.recipes) do
+		for _, product in pairs(recipe.products) do
+			if items[product.name] then
+				if recipe.enabled then
+					item_unlocks[product.name] = "already_unlocked"
+				else
+					item_unlocks[product.name] = find_technology(recipe.name, player)
+				end
+			end
+		end
+	end
+	return item_unlocks
 end
 
 function show_recipe_details(recipe_name, player)
@@ -501,18 +562,7 @@ function show_recipe_details(recipe_name, player)
 	}
 	local machines = get_machines_for_recipe(recipe, player)
 	-- Figure out which machines are available at current tech
-	local machine_unlocks = {}
-	for name, recipe in pairs(player.force.recipes) do
-		for _, product in pairs(recipe.products) do
-			if machines[product.name] then
-				if recipe.enabled then
-					machine_unlocks[product.name] = "already_unlocked"
-				else
-					machine_unlocks[product.name] = find_technology(recipe.name, player)
-				end
-			end
-		end
-	end
+	local machine_unlocks = get_item_unlocks(machines, player)
 	for _, machine in pairs(machines) do
 		local unlock = machine_unlocks[machine.name]
 		if unlock then
