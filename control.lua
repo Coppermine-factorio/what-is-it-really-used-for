@@ -394,7 +394,9 @@ function identify_and_add_to_history(item, player, side, should_clear_history)
 	end
 
 	local history
-	if should_clear_history then
+	if (should_clear_history or
+			global.wiiuf_item_history == nil or
+			global.wiiuf_item_history[player.index] == nil) then
 		clear_history(player)
 		history = global.wiiuf_item_history[player.index]
 	else
@@ -683,6 +685,9 @@ function add_top_button(player)
 end
 
 function clear_history(player)
+	if global.wiiuf_item_history == nil then
+		global.wiiuf_item_history = {}
+	end
 	global.wiiuf_item_history[player.index] = {
 		position = 0,
 		list = {}
