@@ -212,7 +212,7 @@ function identify(item, player, side)
 	end
 
 	title_flow.add{type = "sprite", name = "wiiuf_title_sprite", sprite = sprite}
-	title_flow.add{type = "label", name = "wiiuf_title_label", caption = localised_name, style = "frame_caption_label"}
+	title_flow.add{type = "label", name = "wiiuf_title_label", caption = localised_name, style = "large_caption_label"}
 
 	title_flow.add{
 		type = "sprite-button",
