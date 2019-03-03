@@ -1,4 +1,14 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.4.2
+Date: 03.03.2019
+  Features:
+    - Updated Japanese translation provided by shela.
+  Changes:
+    - Add changelog.txt.
+  Bugfixes:
+    - Avoid automatic display of disabled recipes in certain cases.
+    - Avoid "Unlocked by: false" for pumped-from items.
+---------------------------------------------------------------------------------------------------
 Version: 1.4.1
 Date: 01.03.2019
   Features:
