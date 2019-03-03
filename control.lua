@@ -12,7 +12,7 @@ function find_technology(recipe, player)
 							return tech.localised_name
 						else
 							if SHOW_ALL then
-								return {"disabled_tech", tech.localised_name}
+								return {"disabled_thing", tech.localised_name}
 							else
 								return false
 							end
