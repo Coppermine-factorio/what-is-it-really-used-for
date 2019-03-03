@@ -303,11 +303,17 @@ function identify(item, player, side)
 		machine_unlocks = get_item_unlocks(pumped_from, player)
 		for i, entity in pairs(pumped_from) do
 			local unlock = machine_unlocks[entity.name]
+			local caption = entity.localised_name
 			local tooltip = nil
 			local style = nil
 			if unlock ~= "already_unlocked" then
 				style = "invalid_label"
 				tooltip = {"behind_research", unlock}
+			end
+			if unlock == false then
+				style = "invalid_label"
+				tooltip = {"wiiuf_unavailable"}
+				caption = {"disabled_thing", caption}
 			end
 			pumped_table.add{
 				type = "sprite",
@@ -318,7 +324,7 @@ function identify(item, player, side)
 			local label = pumped_table.add{
 				type = "label",
 				name = "wiiuf_label_" .. i,
-				caption = entity.localised_name,
+				caption = caption,
 				style = style,
 				tooltip = tooltip
 			}
