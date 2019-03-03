@@ -357,9 +357,11 @@ function identify(item, player, side)
 	local product_scroll = product_frame.add{type = "scroll-pane", name = "wiiuf_product_scroll"}
 	set_scroll_dimensions(product_scroll)
 	local product_table = product_scroll.add{type = "table", name = "wiiuf_product_table", column_count = 2}
+	local last_product_recipe = nil
 	local num_product_recipes = 0
 	for i, recipe in pairs(product_of) do
 		if add_recipe_to_list(recipe, product_table, player) then
+			last_product_recipe = recipe
 			num_product_recipes = num_product_recipes + 1
 		end
 	end
@@ -371,7 +373,7 @@ function identify(item, player, side)
 	-- If there was only one recipe for making this item, then go ahead and show
 	-- it immediately
 	if num_product_recipes == 1 then
-		show_recipe_details(product_of[1].name, player)
+		show_recipe_details(last_product_recipe.name, player)
 	else
 		-- Otherwise, add an empty recipe frame so that things don't shift when it's used later
 		local recipe_frame = body_flow.add{
