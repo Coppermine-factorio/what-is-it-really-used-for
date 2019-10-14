@@ -529,9 +529,9 @@ function show_recipe_details(recipe_name, player)
 				amount = thing_to_add.amount
 			elseif thing_to_add.amount_min and thing_to_add.amount_max then
 				amount = (thing_to_add.amount_min + thing_to_add.amount_max) / 2
-				if thing_to_add.probability then
-					amount = amount * thing_to_add.probability
-				end
+			end
+			if (with_amount == true) and thing_to_add.probability then
+				amount = amount * thing_to_add.probability
 			end
 
 			if amount then
