@@ -1,8 +1,13 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.5.2
+Date: 27.01.2020
+  Bugfixes:
+    - Fix changelog.
+---------------------------------------------------------------------------------------------------
 Version: 1.5.1
 Date: 27.01.2020
-	Features:
-		- Support filtering the search list by an item's localized name.
+  Features:
+    - Support filtering the search list by an item's localized name.
 ---------------------------------------------------------------------------------------------------
 Version: 1.5.0
 Date: 26.01.2020
