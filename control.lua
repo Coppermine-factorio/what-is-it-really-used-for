@@ -702,15 +702,21 @@ function clear_history(player)
 	}
 end
 
+function init_player(player)
+	add_top_button(player)
+	clear_history(player)
+	global.wiiuf_item_translations[player.index] = {}
+end
+
 script.on_init(function()
 	global.n_fluids = 0
 	for _ in pairs(game.fluid_prototypes) do
 		global.n_fluids = global.n_fluids +1
 	end
 	global.wiiuf_item_history = {}
+	global.wiiuf_item_translations = {}
 	for _, player in pairs(game.players) do
-		add_top_button(player)
-		clear_history(player)
+		init_player(player)
 	end
 end)
 
@@ -724,8 +730,7 @@ end)
 
 script.on_event(defines.events.on_player_created, function(event)
 	local player = game.players[event.player_index]
-	add_top_button(player)
-	clear_history(player)
+	init_player(player)
 end)
 
 script.on_event(defines.events.on_gui_click, function(event)
@@ -854,6 +859,16 @@ script.on_event("inspect_item", function(event)
 	end
 end)
 
+function get_or_request_translation(player, localised_name)
+	local translations = global.wiiuf_item_translations[player.index]
+	local translation = translations[localised_name[1]]
+	if translation == nil then
+		player.request_translation(localised_name)
+		return ""
+	end
+	return translation
+end
+
 script.on_event(defines.events.on_gui_text_changed, function(event)
 	if event.element.name == "search_bar_textfield" then
 		local player = game.players[event.player_index]
@@ -883,13 +898,16 @@ script.on_event(defines.events.on_gui_text_changed, function(event)
 		results_table.add{type = "label", name = "wiiuf_filler_label_1"}
 		results_table.add{type = "label", name = "wiiuf_filler_label_2"}
 
-		-- remove capitals, purge special characters, and replace spaces with -
+		-- remove capitals, and for internal names also purge special characters
+		-- and replace spaces with -
 		local text = event.element.text:lower()
-		text = text:gsub("([%^%$%(%)%%%.%[%]%*%+%-%?])", "%%%1")
-		text = text:gsub(" ", "%%-")
+		internal_text = text:gsub("([%^%$%(%)%%%.%[%]%*%+%-%?])", "%%%1")
+		internal_text = internal_text:gsub(" ", "%%-")
 
 		for _, item in pairs(game.item_prototypes) do
-			if item.name:lower():find(text) then
+			translation = get_or_request_translation(player, item.localised_name)
+			if item.name:lower():find(internal_text) or
+					translation:lower():find(text) then
 				results_table.add{
 					type = "sprite",
 					name = "wiiuf_item_sprite_" .. item.name,
@@ -905,7 +923,9 @@ script.on_event(defines.events.on_gui_text_changed, function(event)
 			end
 		end
 		for _, item in pairs(game.fluid_prototypes) do
-			if item.name:lower():find(text) then
+			translation = get_or_request_translation(player, item.localised_name)
+			if item.name:lower():find(internal_text) or
+					translation:lower():find(text) then
 				results_table.add{
 					type = "sprite",
 					name = "wiiuf_fluid_" .. item.name,
@@ -930,6 +950,11 @@ script.on_event(defines.events.on_gui_closed, function(event)
 		event.element.name == "wiiuf_center_frame" then
 		event.element.destroy()
 	end
+end)
+
+script.on_event(defines.events.on_string_translated, function(event)
+	translations = global.wiiuf_item_translations[event.player_index]
+	translations[event.localised_string[1]] = event.result
 end)
 
 -- vim:noet:ts=2
