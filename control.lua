@@ -702,10 +702,19 @@ function clear_history(player)
 	}
 end
 
+function ensure_translations_available(player)
+	if global.wiiuf_item_translations == nil then
+		global.wiiuf_item_translations = {}
+	end
+	if global.wiiuf_item_translations[player.index] == nil then
+		global.wiiuf_item_translations[player.index] = {}
+	end
+end
+
 function init_player(player)
 	add_top_button(player)
 	clear_history(player)
-	global.wiiuf_item_translations[player.index] = {}
+	ensure_translations_available(player)
 end
 
 script.on_init(function()
@@ -860,12 +869,6 @@ script.on_event("inspect_item", function(event)
 end)
 
 function get_or_request_translation(player, localised_name)
-	if global.wiiuf_item_translations == nil then
-		global.wiiuf_item_translations = {}
-	end
-	if global.wiiuf_item_translations[player.index] == nil then
-		global.wiiuf_item_translations[player.index] = {}
-	end
 	local translations = global.wiiuf_item_translations[player.index]
 	local translation = translations[localised_name[1]]
 	if translation == nil then
@@ -909,6 +912,8 @@ script.on_event(defines.events.on_gui_text_changed, function(event)
 		local text = event.element.text:lower()
 		internal_text = text:gsub("([%^%$%(%)%%%.%[%]%*%+%-%?])", "%%%1")
 		internal_text = internal_text:gsub(" ", "%%-")
+
+		ensure_translations_available(player)
 
 		for _, item in pairs(game.item_prototypes) do
 			translation = get_or_request_translation(player, item.localised_name)
