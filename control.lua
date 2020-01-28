@@ -793,14 +793,14 @@ script.on_event(defines.events.on_gui_click, function(event)
 		identify_and_add_to_history(
 			event.element.name:sub(19), player, false, true)
 		flow.search_flow.search_bar_placeholder.search_bar_scroll.destroy()
-		flow.search_flow.search_bar_placeholder.search_bar_textfield.destroy()
+		flow.search_flow.search_bar_placeholder.wiiuf_search_bar_textfield.destroy()
 
 	--Label for item in search results
 	elseif event.element.name:find("wiiuf_item_label_") then
 		identify_and_add_to_history(
 			event.element.name:sub(18), player, false, true)
 		flow.search_flow.search_bar_placeholder.search_bar_scroll.destroy()
-		flow.search_flow.search_bar_placeholder.search_bar_textfield.destroy()
+		flow.search_flow.search_bar_placeholder.wiiuf_search_bar_textfield.destroy()
 
 	-- Sprite for recipe in list
 	elseif event.element.name:find("wiiuf_recipe_sprite_") then
@@ -845,14 +845,14 @@ script.on_event("inspect_item", function(event)
 		clear_history(player)
 		identify_and_add_to_history(player.cursor_stack.name, player, true)
 	else
-		if flow.search_flow.search_bar_placeholder.search_bar_textfield then
-			flow.search_flow.search_bar_placeholder.search_bar_textfield.destroy()
+		if flow.search_flow.search_bar_placeholder.wiiuf_search_bar_textfield then
+			flow.search_flow.search_bar_placeholder.wiiuf_search_bar_textfield.destroy()
 			if flow.search_flow.search_bar_placeholder.search_bar_scroll then
 				flow.search_flow.search_bar_placeholder.search_bar_scroll.destroy()
 			end
 		else
 			local text_field = flow.search_flow.search_bar_placeholder.add{
-				type = "textfield", name = "search_bar_textfield"
+				type = "textfield", name = "wiiuf_search_bar_textfield"
 			}
 			text_field.focus()
 		end
@@ -876,7 +876,7 @@ function get_or_request_translation(player, localised_name)
 end
 
 script.on_event(defines.events.on_gui_text_changed, function(event)
-	if event.element.name == "search_bar_textfield" then
+	if event.element.name == "wiiuf_search_bar_textfield" then
 		local player = game.players[event.player_index]
 		local flow = get_wiiuf_flow(player)
 		if flow.search_flow.search_bar_placeholder.search_bar_scroll then
