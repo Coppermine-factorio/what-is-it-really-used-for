@@ -1,4 +1,10 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.5.3
+Date: 27.01.2020
+  Bugfixes:
+    - Avoid crash in translation for ongoing game.
+    - Rename text box to avoid potential name clash with other mods.
+---------------------------------------------------------------------------------------------------
 Version: 1.5.2
 Date: 27.01.2020
   Bugfixes:
