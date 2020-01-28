@@ -860,6 +860,12 @@ script.on_event("inspect_item", function(event)
 end)
 
 function get_or_request_translation(player, localised_name)
+	if global.wiiuf_item_translations == nil then
+		global.wiiuf_item_translations = {}
+	end
+	if global.wiiuf_item_translations[player.index] == nil then
+		global.wiiuf_item_translations[player.index] = {}
+	end
 	local translations = global.wiiuf_item_translations[player.index]
 	local translation = translations[localised_name[1]]
 	if translation == nil then
