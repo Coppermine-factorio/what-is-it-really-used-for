@@ -236,11 +236,6 @@ function identify(item, player, side)
 		style = "wiiuf_frame_borderless"
 	}
 
-	if not side then
-		title_frame.drag_target = main_frame
-		title_label.drag_target = main_frame
-	end
-
 	local title_rhs = title_flow.add{
 		type = "frame",
 		name = "wiiuf_title_rhs",
@@ -425,6 +420,15 @@ function identify(item, player, side)
 			type="label", name="wiiuf_recipe_hint", caption={"wiiuf_recipe_hint"}, single_line=false
 		}
 		label.style.maximal_width = 249
+	end
+
+	if not side then
+		title_frame.drag_target = main_frame
+		title_label.drag_target = main_frame
+
+		for i, f in pairs(body_flow.children) do
+			f.drag_target = main_frame
+		end
 	end
 end
 
