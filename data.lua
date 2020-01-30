@@ -115,6 +115,31 @@ data.raw["gui-style"].default.wiiuf_hidden_label_style = {
     font_color = {r=.8, g=.8, b=.8}
 }
 
+data.raw["gui-style"].default.wiiuf_frame_unspaced = {
+    type = "frame_style",
+
+    top_padding  = 0,
+    right_padding = 0,
+    bottom_padding = 0,
+    left_padding = 0,
+
+    flow_style = {
+        type = "flow_style",
+        horizontal_spacing = 0,
+        vertical_spacing = 0
+    },
+    horizontal_flow_style =
+    {
+        type = "horizontal_flow_style",
+        horizontal_spacing = 0,
+    },
+    vertical_flow_style =
+    {
+        type = "vertical_flow_style",
+        vertical_spacing = 0
+    },
+}
+
 data.raw["gui-style"].default.wiiuf_frame_borderless = {
     type = "frame_style",
     font_color = {r=1, g=1, b=1},

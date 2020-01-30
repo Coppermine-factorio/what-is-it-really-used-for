@@ -164,7 +164,10 @@ function identify(item, player, side)
 	local main_frame = {}
 	if not side then
 		main_frame = player.gui.screen.add{
-			type = "frame", name = "wiiuf_center_frame", direction = "vertical"
+			type = "frame",
+			name = "wiiuf_center_frame",
+			direction = "vertical",
+			style = "wiiuf_frame_unspaced"
 		}
 		-- Register this frame as GUI so it will be closed by usual GUI close
 		-- controls
@@ -178,11 +181,13 @@ function identify(item, player, side)
 		main_frame.location = location
 	else
 		main_frame = mod_gui.get_frame_flow(player).add{
-			type = "frame", name = "wiiuf_left_frame", direction = "vertical"
+			type = "frame",
+			name = "wiiuf_left_frame",
+			direction = "vertical",
+			style = "wiiuf_frame_unspaced"
 		}
 	end
-	
-	
+
 	-- Title flow
 	local title_flow = main_frame.add{type = "flow", name = "wiiuf_title_flow", direction = "horizontal"}
 
