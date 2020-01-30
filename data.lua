@@ -114,4 +114,29 @@ data.raw["gui-style"].default.wiiuf_hidden_label_style = {
     font = "default",
     font_color = {r=.8, g=.8, b=.8}
 }
--- vim:ts=4
+
+data.raw["gui-style"].default.wiiuf_frame_borderless = {
+    type = "frame_style",
+    font_color = {r=1, g=1, b=1},
+
+    top_padding  = 0,
+    right_padding = 0,
+    bottom_padding = 0,
+    left_padding = 0,
+
+    title_top_padding = 0,
+    title_left_padding = 0,
+    title_bottom_padding = 4,
+    title_right_padding = 0,
+
+    graphical_set =
+    {
+        type = "composition",
+        filename = "__what-is-it-really-used-for__/graphics/gui.png",
+        priority = "extra-high-no-scale",
+        load_in_minimal_mode = true,
+        corner_size = {1, 1},
+        position = {0, 0}
+    }
+}
+-- vim:ts=4:sw=4

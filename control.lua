@@ -151,8 +151,8 @@ function identify(item, player, side)
 	local section_width = 300
 	
 	-- GUI stuff
-	if player.gui.center.wiiuf_center_frame then
-		player.gui.center.wiiuf_center_frame.destroy()
+	if player.gui.screen.wiiuf_center_frame then
+		player.gui.screen.wiiuf_center_frame.destroy()
 	end
 
 	local mod_frame_flow = mod_gui.get_frame_flow(player)
@@ -163,7 +163,7 @@ function identify(item, player, side)
 	-- Create center frame
 	local main_frame = {}
 	if not side then
-		main_frame = player.gui.center.add{
+		main_frame = player.gui.screen.add{
 			type = "frame", name = "wiiuf_center_frame", direction = "vertical"
 		}
 		-- Register this frame as GUI so it will be closed by usual GUI close
@@ -179,6 +179,11 @@ function identify(item, player, side)
 	-- Title flow
 	local title_flow = main_frame.add{type = "flow", name = "wiiuf_title_flow", direction = "horizontal"}
 
+	local title_frame = title_flow.add{
+		type = "frame",
+		name = "wiiuf_title_frame"
+	}
+
 	local sprite = "questionmark"
 	local localised_name = item
 	if game.item_prototypes[item] then
@@ -193,7 +198,7 @@ function identify(item, player, side)
 
 	local history = global.wiiuf_item_history[player.index]
 	if history.position > 1 then
-		title_flow.add{
+		title_frame.add{
 			type = "sprite-button",
 			name = "wiiuf_back",
 			sprite = "arrow-left",
@@ -202,7 +207,7 @@ function identify(item, player, side)
 		}
 	end
 	if history.position < #history.list then
-		title_flow.add{
+		title_frame.add{
 			type = "sprite-button",
 			name = "wiiuf_forward",
 			sprite = "arrow-right",
@@ -211,10 +216,27 @@ function identify(item, player, side)
 		}
 	end
 
-	title_flow.add{type = "sprite", name = "wiiuf_title_sprite", sprite = sprite}
-	title_flow.add{type = "label", name = "wiiuf_title_label", caption = localised_name, style = "large_caption_label"}
+	title_frame.add{type = "sprite", name = "wiiuf_title_sprite", sprite = sprite}
+	local title_label = title_frame.add{
+		type = "frame",
+		name = "wiiuf_title_label",
+		caption = localised_name,
+		style = "wiiuf_frame_borderless"
+	}
 
-	title_flow.add{
+	if not side then
+		title_frame.drag_target = main_frame
+		title_label.drag_target = main_frame
+	end
+
+	local title_rhs = title_flow.add{
+		type = "frame",
+		name = "wiiuf_title_rhs",
+		style = "wiiuf_frame_borderless"
+	}
+	title_rhs.style.horizontal_align = "right"
+
+	title_rhs.add{
 		type = "sprite-button",
 		name = "wiiuf_minimise_" .. item,
 		sprite = "arrow-box",
@@ -223,7 +245,7 @@ function identify(item, player, side)
 	}
 
 	if side then
-		title_flow.add{
+		title_rhs.add{
 			type = "sprite-button",
 			name = "wiiuf_show_" .. item,
 			sprite = "arrow-right",
@@ -231,7 +253,7 @@ function identify(item, player, side)
 			tooltip = {"show", localised_name}
 		}
 	else
-		title_flow.add{
+		title_rhs.add{
 			type = "sprite-button",
 			name = "wiiuf_pin_" .. item,
 			sprite = "arrow-bar",
@@ -240,7 +262,7 @@ function identify(item, player, side)
 		}
 	end
 
-	title_flow.add{
+	title_rhs.add{
 		type = "sprite-button",
 		name = "wiiuf_close",
 		sprite = "close",
@@ -443,7 +465,7 @@ end
 function show_recipe_details(recipe_name, player)
 	local recipe = player.force.recipes[recipe_name]
 
-	local main_frame = player.gui.center.wiiuf_center_frame
+	local main_frame = player.gui.screen.wiiuf_center_frame
 	local side = false
 	if not main_frame then
 		side = true
@@ -655,7 +677,7 @@ function minimise(item, player, from_side)
 			style = "slot_button"
 		}
 	end
-	if not from_side and player.gui.center.wiiuf_center_frame then player.gui.center.wiiuf_center_frame.destroy() end
+	if not from_side and player.gui.screen.wiiuf_center_frame then player.gui.screen.wiiuf_center_frame.destroy() end
 	local mod_frame_flow = mod_gui.get_frame_flow(player)
 	if from_side and mod_frame_flow.wiiuf_left_frame then mod_frame_flow.wiiuf_left_frame.destroy() end
 end
@@ -776,7 +798,7 @@ script.on_event(defines.events.on_gui_click, function(event)
 		if flow.fluids_table then flow.fluids_table.destroy() end
 	
 	elseif event.element.name == "wiiuf_close" then
-		event.element.parent.parent.destroy()
+		event.element.parent.parent.parent.destroy()
 	
 	elseif event.element.name:find("wiiuf_minimise_") then
 		minimise(event.element.name:sub(16), player, event.element.parent.parent.name == "wiiuf_left_frame")
