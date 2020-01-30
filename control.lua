@@ -169,6 +169,13 @@ function identify(item, player, side)
 		-- Register this frame as GUI so it will be closed by usual GUI close
 		-- controls
 		player.opened = main_frame
+		local location = {200, 100}
+		if global.wiiuf_frame_locations ~= nil then
+			if global.wiiuf_frame_locations[player.index] ~= nil then
+				location = global.wiiuf_frame_locations[player.index]
+			end
+		end
+		main_frame.location = location
 	else
 		main_frame = mod_gui.get_frame_flow(player).add{
 			type = "frame", name = "wiiuf_left_frame", direction = "vertical"
@@ -973,6 +980,15 @@ script.on_event(defines.events.on_gui_text_changed, function(event)
 				label.style.minimal_width = 101
 			end
 		end
+	end
+end)
+
+script.on_event(defines.events.on_gui_location_changed, function(event)
+	if event.element.name == "wiiuf_center_frame" then
+		if global.wiiuf_frame_locations == nil then
+			global.wiiuf_frame_locations = {}
+		end
+		global.wiiuf_frame_locations[event.player_index] = event.element.location
 	end
 end)
 
