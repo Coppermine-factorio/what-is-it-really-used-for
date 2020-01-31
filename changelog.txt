@@ -1,4 +1,12 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.5.4
+Date: 27.01.2020
+  Features:
+    - Window is now draggable.
+    - Slightly faster translation implementation.
+  Bugfixes:
+    - Handle recipes with multiple unlocking techs better.
+---------------------------------------------------------------------------------------------------
 Version: 1.5.3
 Date: 27.01.2020
   Bugfixes:
