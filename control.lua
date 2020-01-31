@@ -3,27 +3,22 @@ require("mod-gui")
 SHOW_ALL = false	-- Set to true to also display disabled recipes and recipes without technology.
 
 function find_technology(recipe, player)
+	local disabled_unlocking_tech = {"not_found"}
 	for _,tech in pairs(player.force.technologies) do
 		if not tech.researched then
 			for _, effect in pairs(tech.effects) do
-				if effect.type == "unlock-recipe" then
-					if effect.recipe == recipe then
-						if tech.enabled then
-							return tech.localised_name
-						else
-							if SHOW_ALL then
-								return {"disabled_thing", tech.localised_name}
-							else
-								return false
-							end
-						end
+				if effect.type == "unlock-recipe" and effect.recipe == recipe then
+					if tech.enabled then
+						return tech.localised_name
+					else
+						disabled_unlocking_tech = {"disabled_thing", tech.localised_name}
 					end
 				end
 			end
 		end
 	end
 	if SHOW_ALL then
-		return {"not_found"}
+		return disabled_unlocking_tech
 	else
 		return false
 	end
