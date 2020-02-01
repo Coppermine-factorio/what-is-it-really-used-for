@@ -903,7 +903,8 @@ end)
 
 function get_or_request_translation(player, localised_name)
   local translations = global.wiiuf_item_translations[player.index]
-  local translation = translations[localised_name[1]]
+  local key = localised_name[1] or localised_name
+  local translation = translations[key]
   if translation == nil then
     player.request_translation(localised_name)
     return ""
@@ -1006,8 +1007,9 @@ script.on_event(defines.events.on_gui_closed, function(event)
 end)
 
 script.on_event(defines.events.on_string_translated, function(event)
-  translations = global.wiiuf_item_translations[event.player_index]
-  translations[event.localised_string[1]] = event.result
+  local translations = global.wiiuf_item_translations[event.player_index]
+  local key = event.localised_string[1] or event.localised_string
+  translations[key] = event.result
 end)
 
 -- vim:et:ts=2:sw=2
