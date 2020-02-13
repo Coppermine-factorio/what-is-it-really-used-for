@@ -914,15 +914,17 @@ script.on_event("inspect_item", function(event)
   end
 end)
 
-function get_or_request_translation(player, localised_name)
+function get_or_request_translation(player, localised_name, count)
   local translations = global.wiiuf_item_translations[player.index]
   local key = localised_name[1] or localised_name
   local translation = translations[key]
   if translation == nil then
-    player.request_translation(localised_name)
-    return ""
+    if count < 100 then
+      player.request_translation(localised_name)
+    end
+    return "", count + 1
   end
-  return translation
+  return translation, count
 end
 
 script.on_event(defines.events.on_gui_text_changed, function(event)
@@ -961,9 +963,11 @@ script.on_event(defines.events.on_gui_text_changed, function(event)
     internal_text = internal_text:gsub(" ", "%%-")
 
     ensure_translations_available(player)
+    local translation_count = 0
 
     for _, item in pairs(game.item_prototypes) do
-      translation = get_or_request_translation(player, item.localised_name)
+      translation, translation_count = get_or_request_translation(
+        player, item.localised_name, translation_count)
       if item.name:lower():find(internal_text) or
           translation:lower():find(text) then
         results_table.add{
@@ -981,7 +985,8 @@ script.on_event(defines.events.on_gui_text_changed, function(event)
       end
     end
     for _, item in pairs(game.fluid_prototypes) do
-      translation = get_or_request_translation(player, item.localised_name)
+      translation, translation_count = get_or_request_translation(
+        player, item.localised_name, translation_count)
       if item.name:lower():find(internal_text) or
           translation:lower():find(text) then
         results_table.add{
