@@ -957,7 +957,7 @@ script.on_event(defines.events.on_gui_text_changed, function(event)
     -- remove capitals, and for internal names also purge special characters
     -- and replace spaces with -
     local text = event.element.text:lower()
-    internal_text = text:gsub("([%^%$%(%)%%%.%[%]%*%+%-%?])", "%%%1")
+    local internal_text = text:gsub("([%^%$%(%)%%%.%[%]%*%+%-%?])", "%%%1")
     internal_text = internal_text:gsub(" ", "%%-")
 
     ensure_translations_available(player)
