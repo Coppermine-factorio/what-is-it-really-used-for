@@ -266,7 +266,7 @@ function identify(item, player, side)
 
   title_rhs.add{
     type = "sprite-button",
-    name = "wiiuf_close",
+    name = "wiiuf_close_3",
     sprite = "close",
     style = button_style,
     tooltip = {"close"}
@@ -659,14 +659,24 @@ end
 
 function minimise(item, player, from_side)
   if not player.gui.left.wiiuf_item_flow then
-    local item_flow = player.gui.left.add{type = "scroll-pane", name = "wiiuf_item_flow", style = "small_spacing_scroll_pane_style"}
+    local item_flow = player.gui.left.add{
+      type = "scroll-pane",
+      name = "wiiuf_item_flow",
+      style = "small_spacing_scroll_pane_style"
+    }
     local item_table = item_flow.add{
       type = "table",
       column_count = 1,
       name = "wiiuf_item_table",
       style = "slot_table"
     }
-    item_table.add{type = "sprite-button", name = "wiiuf_close", sprite = "close", style = "slot_button", tooltip = {"close"}}
+    item_table.add{
+      type = "sprite-button",
+      name = "wiiuf_close_2",
+      sprite = "close",
+      style = "slot_button",
+      tooltip = {"close"}
+    }
     item_flow.style.maximal_height = 350
   end
 
@@ -808,7 +818,10 @@ script.on_event(defines.events.on_gui_click, function(event)
     identify_and_add_to_history(event.element.name:sub(13), player, false, true)
     if flow.fluids_table then flow.fluids_table.destroy() end
 
-  elseif event.element.name == "wiiuf_close" then
+  elseif event.element.name == "wiiuf_close_2" then
+    event.element.parent.parent.destroy()
+
+  elseif event.element.name == "wiiuf_close_3" then
     event.element.parent.parent.parent.destroy()
 
   elseif event.element.name:find("wiiuf_minimise_") then
