@@ -1,6 +1,6 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.5.6
-Date: 01.02.2020
+Date: 13.02.2020
   Bugfixes:
     - Avoid crash on closing minimized panel.
     - Rate-limit translation requests.
