@@ -582,7 +582,7 @@ function show_recipe_details(recipe_name, player)
     if style then
       label.style = style
     end
-    label.style.maximal_width = 249
+    label.style.maximal_width = 244
     if tooltip then
       label.tooltip = tooltip
     end
