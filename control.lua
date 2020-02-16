@@ -745,19 +745,19 @@ function clear_history(player)
   }
 end
 
-function ensure_translations_available(player)
+function ensure_translations_available(player_index)
   if global.wiiuf_item_translations == nil then
     global.wiiuf_item_translations = {}
   end
-  if global.wiiuf_item_translations[player.index] == nil then
-    global.wiiuf_item_translations[player.index] = {}
+  if global.wiiuf_item_translations[player_index] == nil then
+    global.wiiuf_item_translations[player_index] = {}
   end
 end
 
 function init_player(player)
   add_top_button(player)
   clear_history(player)
-  ensure_translations_available(player)
+  ensure_translations_available(player.index)
 end
 
 script.on_init(function()
@@ -962,7 +962,7 @@ script.on_event(defines.events.on_gui_text_changed, function(event)
     local internal_text = text:gsub("([%^%$%(%)%%%.%[%]%*%+%-%?])", "%%%1")
     internal_text = internal_text:gsub(" ", "%%-")
 
-    ensure_translations_available(player)
+    ensure_translations_available(player.index)
     local translation_count = 0
 
     for _, item in pairs(game.item_prototypes) do
@@ -1025,6 +1025,9 @@ script.on_event(defines.events.on_gui_closed, function(event)
 end)
 
 script.on_event(defines.events.on_string_translated, function(event)
+  -- This can be triggered by a different mod requesting translpations, so we
+  -- need to ensure that the translations are available
+  ensure_translations_available(event.player_index)
   local translations = global.wiiuf_item_translations[event.player_index]
   local key = event.localised_string[1] or event.localised_string
   translations[key] = event.result
