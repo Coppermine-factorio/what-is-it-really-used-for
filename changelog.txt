@@ -1,4 +1,10 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.5.7
+Date: 16.02.2020
+  Bugfixes:
+    - Avoid crash on unexpected translation response.
+    - Avoid horizontal scrollbar in recipe pane.
+---------------------------------------------------------------------------------------------------
 Version: 1.5.6
 Date: 13.02.2020
   Bugfixes:
