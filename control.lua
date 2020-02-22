@@ -69,6 +69,7 @@ function add_recipe_to_list(recipe, table, player)
     }
     label.style.minimal_height = 39
     label.style.maximal_width = 249
+    label.style.vertical_align = "center"
     if not recipe.enabled then
       label.style = "invalid_label"
       label.tooltip = {"behind_research", from_research}
@@ -353,6 +354,7 @@ function identify(item, player, side)
         tooltip = tooltip
       }
       label.style.minimal_height = 34
+      label.style.vertical_align = "center"
     end
   end
 
