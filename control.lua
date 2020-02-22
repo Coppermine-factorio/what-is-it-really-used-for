@@ -368,6 +368,7 @@ function identify(item, player, side)
       looted_table.add{type = "sprite", name = "wiiuf_sprite_" .. i, sprite = "entity/"..entity.name}
       local label = looted_table.add{type = "label", name = "wiiuf_label_" .. i, caption = entity.localised_name}
       label.style.minimal_height = 34
+      label.style.vertical_align = "center"
     end
   end
 
@@ -1064,6 +1065,7 @@ script.on_event(defines.events.on_gui_text_changed, function(event)
         }
         label.style.minimal_height = 34
         label.style.minimal_width = 101
+        label.style.vertical_align = "center"
       end
     end
     for _, item in pairs(game.fluid_prototypes) do
@@ -1083,6 +1085,7 @@ script.on_event(defines.events.on_gui_text_changed, function(event)
         }
         label.style.minimal_height = 34
         label.style.minimal_width = 101
+        label.style.vertical_align = "center"
       end
     end
   end
