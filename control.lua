@@ -130,7 +130,10 @@ function identify(item, player, side)
         entity.mineable_properties.products) then
       for _, product in pairs(entity.mineable_properties.products) do
         if product.name == item then
-          table.insert(mined_from, entity)
+          table.insert(
+            mined_from,
+            {ore=entity, fluid=entity.mineable_properties.required_fluid}
+          )
           break
         end
       end
@@ -310,11 +313,47 @@ function identify(item, player, side)
     }
     mined_scroll.style.minimal_height = table_height
     mined_scroll.style.maximal_height = table_height
-    local mined_table = mined_scroll.add{type = "table", name = "wiiuf_mined_table", column_count = 2}
+    local mined_table = mined_scroll.add{
+      type = "table",
+      name = "wiiuf_mined_table",
+      column_count = 4
+    }
     for i, entity in pairs(mined_from) do
-      mined_table.add{type = "sprite", name = "wiiuf_sprite_" .. i, sprite = "entity/"..entity.name}
-      local label = mined_table.add{type = "label", name = "wiiuf_label_" .. i, caption = entity.localised_name}
+      local ore = entity.ore
+      local fluid = entity.fluid
+      mined_table.add{
+        type = "sprite",
+        name = "wiiuf_sprite_" .. i,
+        sprite = "entity/"..ore.name
+      }
+      local label = mined_table.add{
+        type = "label",
+        name = "wiiuf_label_" .. i,
+        caption = ore.localised_name
+      }
       label.style.minimal_height = 34
+      label.style.vertical_align = "center"
+      if fluid then
+        mined_table.add{
+          type = "sprite",
+          name = "wiiuf_mined_fluid_sprite_"..fluid,
+          sprite = "fluid/"..fluid
+        }
+        mined_table.add{
+          type = "label",
+          name = "wiiuf_mined_fluid_label_"..fluid,
+          caption = game.fluid_prototypes[fluid].localised_name
+        }
+      else
+        mined_table.add{
+          type = "label",
+          name = "wiiuf_padding_label_a_"..i
+        }
+        mined_table.add{
+          type = "label",
+          name = "wiiuf_padding_label_b_"..i
+        }
+      end
     end
   end
 
@@ -905,6 +944,16 @@ script.on_event(defines.events.on_gui_click, function(event)
 
   -- Label for item in recipe view
   elseif event.element.name:find("wiiuf_recipe_item_label_") then
+    identify_and_add_to_history(
+      event.element.name:sub(25), player, false, false)
+
+  -- Sprite for fluid in mined_from view
+  elseif event.element.name:find("wiiuf_mined_fluid_sprite_") then
+    identify_and_add_to_history(
+      event.element.name:sub(26), player, false, false)
+
+  -- Label for fluid in mined_from view
+  elseif event.element.name:find("wiiuf_mined_fluid_label_") then
     identify_and_add_to_history(
       event.element.name:sub(25), player, false, false)
 
