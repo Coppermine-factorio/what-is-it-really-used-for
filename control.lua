@@ -276,18 +276,38 @@ function identify(item, player, side)
   -- Body flow
   local body_flow = {}
   if side then
-    local body_scroll = main_frame.add{type = "scroll-pane", name = "wiiuf_body_scroll"}
+    local body_scroll = main_frame.add{
+      type = "scroll-pane",
+      name = "wiiuf_body_scroll"
+    }
     body_scroll.style.maximal_width = 250
     body_scroll.vertical_scroll_policy = "never"
-    body_flow = body_scroll.add{type = "flow", name = "wiiuf_body_flow", direction = "horizontal", style = "slot_table_spacing_horizontal_flow"}
+    body_flow = body_scroll.add{
+      type = "flow",
+      name = "wiiuf_body_flow",
+      direction = "horizontal",
+      style = "slot_table_spacing_horizontal_flow"
+    }
   else
-    body_flow = main_frame.add{type = "flow", name = "wiiuf_body_flow", direction = "horizontal", style = "slot_table_spacing_horizontal_flow"}
+    body_flow = main_frame.add{
+      type = "flow",
+      name = "wiiuf_body_flow",
+      direction = "horizontal",
+      style = "slot_table_spacing_horizontal_flow"
+    }
   end
 
   -- mined from
   if #mined_from > 0 then
-    local mined_frame = body_flow.add{type = "frame", name = "wiiuf_mined_frame", caption = {"mined_from"}}
-    local mined_scroll = mined_frame.add{type = "scroll-pane", name = "wiiuf_mined_scroll"}
+    local mined_frame = body_flow.add{
+      type = "frame",
+      name = "wiiuf_mined_frame",
+      caption = {"mined_from"}
+    }
+    local mined_scroll = mined_frame.add{
+      type = "scroll-pane",
+      name = "wiiuf_mined_scroll"
+    }
     mined_scroll.style.minimal_height = table_height
     mined_scroll.style.maximal_height = table_height
     local mined_table = mined_scroll.add{type = "table", name = "wiiuf_mined_table", column_count = 2}
@@ -385,10 +405,21 @@ function identify(item, player, side)
   end
 
   -- product of
-  local product_frame = body_flow.add{type = "frame", name = "wiiuf_product_frame", caption = {"product_of"}}
-  local product_scroll = product_frame.add{type = "scroll-pane", name = "wiiuf_product_scroll"}
+  local product_frame = body_flow.add{
+    type = "frame",
+    name = "wiiuf_product_frame",
+    caption = {"product_of"}
+  }
+  local product_scroll = product_frame.add{
+    type = "scroll-pane",
+    name = "wiiuf_product_scroll"
+  }
   set_scroll_dimensions(product_scroll)
-  local product_table = product_scroll.add{type = "table", name = "wiiuf_product_table", column_count = 2}
+  local product_table = product_scroll.add{
+    type = "table",
+    name = "wiiuf_product_table",
+    column_count = 2
+  }
   local last_product_recipe = nil
   local num_product_recipes = 0
   for i, recipe in pairs(product_of) do
