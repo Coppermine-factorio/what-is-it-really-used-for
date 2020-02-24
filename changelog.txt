@@ -1,4 +1,11 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.5.8
+Date: 23.02.2020
+  Features:
+    - Show fluid used to mine ore in Mined from pane.
+  Bugfixes:
+    - Have more consistent vertical alignment of text.
+---------------------------------------------------------------------------------------------------
 Version: 1.5.7
 Date: 16.02.2020
   Bugfixes:
