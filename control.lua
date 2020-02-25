@@ -82,7 +82,7 @@ function add_recipe_to_list(recipe, table, player)
   end
 end
 
-function identify(item, player, side)
+function identify(item, player, side, recipe_name)
   -- If it's not actually an item, do nothing
   -- This can happen if you click the recipe name on the recipe pane
   if not game.item_prototypes[item] and not game.fluid_prototypes[item] then
@@ -473,9 +473,12 @@ function identify(item, player, side)
     product_frame.destroy()
   end
 
+  -- If we were given a recipe to show, then show it
+  if recipe_name then
+    show_recipe_details(recipe_name, player)
   -- If there was only one recipe for making this item, then go ahead and show
   -- it immediately
-  if num_product_recipes == 1 then
+  elseif num_product_recipes == 1 then
     show_recipe_details(last_product_recipe.name, player)
   else
     -- Otherwise, add an empty recipe frame so that things don't shift when it's used later
@@ -500,7 +503,8 @@ function identify(item, player, side)
   end
 end
 
-function identify_and_add_to_history(item, player, side, should_clear_history)
+function identify_and_add_to_history(
+    item, player, side, should_clear_history, recipe_name)
   -- If it's not actually an item, do nothing
   -- This can happen if you click the recipe name on the recipe pane
   if not game.item_prototypes[item] and not game.fluid_prototypes[item] then
@@ -527,7 +531,7 @@ function identify_and_add_to_history(item, player, side, should_clear_history)
     history.position = history.position + 1
   end
 
-  identify(item, player, side)
+  identify(item, player, side, recipe_name)
 end
 
 function get_item_unlocks(items, player)
@@ -548,6 +552,10 @@ end
 
 function show_recipe_details(recipe_name, player)
   local recipe = player.force.recipes[recipe_name]
+
+  if not recipe then
+    return
+  end
 
   local main_frame = player.gui.screen.wiiuf_center_frame
   local side = false
@@ -1119,5 +1127,21 @@ script.on_event(defines.events.on_string_translated, function(event)
   local key = event.localised_string[1] or event.localised_string
   translations[key] = event.result
 end)
+
+-- Interface for other mods to open WIIRUF window
+-- version - returns API version of this interface.
+-- open_item - opens the WIIRUF GUI examining the given item.  player_index and
+--  item_name are mandatory.  recipe_name is optional; if given then it will
+--  open that recipe in the recipe pane.  The recipe should probably be related
+--  to the given item, but it doesn't technically have to be.
+remote.add_interface("wiiuf", {
+  version=function()
+    return 1
+  end,
+  open_item=function(player_index, item_name, recipe_name)
+    player = game.players[player_index]
+    identify_and_add_to_history(item_name, player, false, true, recipe_name)
+  end
+})
 
 -- vim:et:ts=2:sw=2
