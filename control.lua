@@ -336,12 +336,12 @@ function identify(item, player, side)
       if fluid then
         mined_table.add{
           type = "sprite",
-          name = "wiiuf_mined_fluid_sprite_"..fluid,
+          name = "wiiuf_mined_fluid_sprite_"..i.."_"..fluid,
           sprite = "fluid/"..fluid
         }
         mined_table.add{
           type = "label",
-          name = "wiiuf_mined_fluid_label_"..fluid,
+          name = "wiiuf_mined_fluid_label_"..i.."_"..fluid,
           caption = game.fluid_prototypes[fluid].localised_name
         }
       else
@@ -950,13 +950,15 @@ script.on_event(defines.events.on_gui_click, function(event)
 
   -- Sprite for fluid in mined_from view
   elseif event.element.name:find("wiiuf_mined_fluid_sprite_") then
-    identify_and_add_to_history(
-      event.element.name:sub(26), player, false, false)
+    local number_and_name = event.element.name:sub(26)
+    local name = number_and_name:sub(number_and_name:find("_")+1)
+    identify_and_add_to_history(name, player, false, false)
 
   -- Label for fluid in mined_from view
   elseif event.element.name:find("wiiuf_mined_fluid_label_") then
-    identify_and_add_to_history(
-      event.element.name:sub(25), player, false, false)
+    local number_and_name = event.element.name:sub(25)
+    local name = number_and_name:sub(number_and_name:find("_")+1)
+    identify_and_add_to_history(name, player, false, false)
 
   -- Back through item history
   elseif event.element.name == "wiiuf_back" then
