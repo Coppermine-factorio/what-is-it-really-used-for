@@ -164,4 +164,10 @@ data.raw["gui-style"].default.wiiuf_frame_borderless = {
         position = {0, 0}
     }
 }
+
+data.raw["gui-style"].default.wiiuf_small_slot_button = {
+    type = "button_style",
+    parent = "slot_button",
+    size = 20
+}
 -- vim:ts=4:sw=4

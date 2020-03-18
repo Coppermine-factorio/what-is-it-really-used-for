@@ -205,7 +205,7 @@ function identify(item, player, side, recipe_name)
     localised_name = game.fluid_prototypes[item].localised_name
   end
 
-  local button_style = "small_slot_button"
+  local button_style = "wiiuf_small_slot_button"
 
   local history = global.wiiuf_item_history[player.index]
   if history.position > 1 then
