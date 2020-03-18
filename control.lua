@@ -1061,8 +1061,8 @@ script.on_event(defines.events.on_gui_text_changed, function(event)
     for _, item in pairs(game.item_prototypes) do
       translation, translation_count = get_or_request_translation(
         player, item.localised_name, translation_count)
-      if item.name:lower():find(internal_text) or
-          translation:lower():find(text) then
+      if item.name:lower():find(internal_text, 1, true) or
+          translation:lower():find(text, 1, true) then
         results_table.add{
           type = "sprite",
           name = "wiiuf_item_sprite_" .. item.name,
@@ -1081,8 +1081,8 @@ script.on_event(defines.events.on_gui_text_changed, function(event)
     for _, item in pairs(game.fluid_prototypes) do
       translation, translation_count = get_or_request_translation(
         player, item.localised_name, translation_count)
-      if item.name:lower():find(internal_text) or
-          translation:lower():find(text) then
+      if item.name:lower():find(internal_text, 1, true) or
+          translation:lower():find(text, 1, true) then
         results_table.add{
           type = "sprite",
           name = "wiiuf_fluid_" .. item.name,
