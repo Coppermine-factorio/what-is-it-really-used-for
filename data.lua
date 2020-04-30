@@ -66,7 +66,7 @@ data:extend({
   type = "custom-input",
   name = "inspect_item",
   key_sequence = "CONTROL + F",
-  consuming = "script-only"
+  consuming = "game-only"
 
   -- 'consuming'
   -- available options:
