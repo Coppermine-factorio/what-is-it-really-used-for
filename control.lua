@@ -1,4 +1,4 @@
-require("mod-gui")
+local mod_gui = require("mod-gui")
 
 SHOW_ALL = false  -- Set to true to also display disabled recipes and recipes without technology.
 
