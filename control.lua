@@ -806,7 +806,7 @@ function add_top_button(player)
     type = "sprite-button",
     name = "looking-glass",
     sprite = "looking-glass",
-    style = mod_gui.button_style,
+    style = mod_gui.icon_button_style,
     tooltip = {"top_button_tooltip"}
   }
 end
