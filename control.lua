@@ -62,6 +62,10 @@ end
 function add_recipe_to_list(recipe, table, player)
   local from_research = recipe.enabled or find_technology(recipe.name, player)
   if from_research then
+    show_hidden = player.mod_settings["wiiuf-show-hidden-recipes"].value
+    if recipe.hidden and not show_hidden then
+      return false
+    end
     table.add{type="sprite", name="wiiuf_recipe_sprite_"..recipe.name, sprite="recipe/"..recipe.name}
     local label = table.add{
       type="label", name="wiiuf_recipe_label_"..recipe.name, caption=recipe.localised_name,
