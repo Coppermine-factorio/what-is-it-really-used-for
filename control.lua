@@ -993,7 +993,7 @@ end)
 script.on_event("inspect_item", function(event)
   local player = game.players[event.player_index]
   local flow = get_wiiuf_flow(player)
-  if player.cursor_stack.valid_for_read then
+  if player.cursor_stack ~= nil and player.cursor_stack.valid_for_read then
     clear_history(player)
     identify_and_add_to_history(player.cursor_stack.name, player, true)
   else
