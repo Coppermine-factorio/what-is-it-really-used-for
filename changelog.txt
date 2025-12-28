@@ -1,4 +1,11 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.8.0
+Date: 28.12.2025
+  Features:
+    - Support case-insensitive searching in other languages.
+  Changes:
+    - Change button style to better match other mods.
+---------------------------------------------------------------------------------------------------
 Version: 1.7.1
 Date: 09.11.2024
   Changes:
