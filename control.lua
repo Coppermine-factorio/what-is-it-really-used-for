@@ -1059,7 +1059,8 @@ script.on_event(defines.events.on_gui_text_changed, function(event)
 
     -- remove capitals, and for internal names also purge special characters
     -- and replace spaces with -
-    local text = event.element.text:lower()
+    local to_lower_func = helpers.multilingual_to_lower or string.lower
+    local text = to_lower_func(event.element.text)
     local internal_text = text:gsub("([%^%$%(%)%%%.%[%]%*%+%-%?])", "%%%1")
     internal_text = internal_text:gsub(" ", "%%-")
 
@@ -1069,8 +1070,8 @@ script.on_event(defines.events.on_gui_text_changed, function(event)
     for _, item in pairs(prototypes.item) do
       translation, translation_count = get_or_request_translation(
         player, item.localised_name, translation_count)
-      if item.name:lower():find(internal_text, 1, true) or
-          translation:lower():find(text, 1, true) then
+      if to_lower_func(item.name):find(internal_text, 1, true) or
+          to_lower_func(translation):find(text, 1, true) then
         results_table.add{
           type = "sprite",
           name = "wiiuf_item_sprite_" .. item.name,
@@ -1089,8 +1090,8 @@ script.on_event(defines.events.on_gui_text_changed, function(event)
     for _, item in pairs(prototypes.fluid) do
       translation, translation_count = get_or_request_translation(
         player, item.localised_name, translation_count)
-      if item.name:lower():find(internal_text, 1, true) or
-          translation:lower():find(text, 1, true) then
+      if to_lower_func(item.name):find(internal_text, 1, true) or
+          to_lower_func(translation):find(text, 1, true) then
         results_table.add{
           type = "sprite",
           name = "wiiuf_fluid_" .. item.name,
